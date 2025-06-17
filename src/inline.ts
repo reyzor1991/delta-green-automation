@@ -28,7 +28,6 @@ export async function clickInclineSanityRoll(event: MouseEvent, options: { succe
     await roll.evaluate();
     roll.toChat();
     handleSanityResult(actor, roll, options);
-
 }
 
 async function handleSanityResult(
@@ -46,6 +45,8 @@ async function handleSanityResult(
     await r.evaluate({maximize: isCritFailure, minimize: isCritSuccess});
     let applySanDamage = r.total;
     const isBreakpoint = actor.system.sanity.breakingPointHit;
+    const isViolenceAdapted = actor.system.sanity.adaptations.violence.isAdapted;
+    const isHelplessnessAdapted = actor.system.sanity.adaptations.helplessness.isAdapted;
 
     let dataForUpdate = {
         "system.sanity.value": actor.system.sanity.value - applySanDamage
@@ -88,6 +89,7 @@ async function handleSanityResult(
             },
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
+        resetAdaptation(actor, options?.source);
     }
 
     if (!isBreakpoint && actor.system.sanity.breakingPointHit) {
@@ -98,6 +100,56 @@ async function handleSanityResult(
                 alias: 'System'
             },
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
+        });
+        resetAdaptation(actor, options?.source);
+    }
+
+    if (!isViolenceAdapted && actor.system.sanity.adaptations.violence.isAdapted) {
+        let violenceRoll = new Roll("1d6")
+        await violenceRoll.evaluate();
+        violenceRoll.toMessage({
+            flavor: `${actor.name}'s empathy suffers, loses ${violenceRoll.total} CHA and the same amount from each Bond.`
+        })
+
+        actor.update({
+            "system.statistics.cha.value": actor.system.statistics.cha.value - violenceRoll.total
+        })
+        actor.items.contents
+            .filter(i => i.type === 'bond' && i.system.score > 0)
+            .forEach(bond => {
+                bond.update({
+                    "system.score": Math.max(bond.system.score - violenceRoll.total, 0),
+                })
+            })
+    }
+    if (!isHelplessnessAdapted && actor.system.sanity.adaptations.helplessness.isAdapted) {
+        let helplessnessRoll = new Roll("1d6")
+        await helplessnessRoll.evaluate();
+        helplessnessRoll.toMessage({
+            flavor: `${actor.name}'s personal drive suffers and loses ${helplessnessRoll.total} POW.`
+        })
+
+        actor.update({
+            "system.statistics.pow.value": actor.system.statistics.pow.value - helplessnessRoll.total
+        })
+    }
+}
+
+function resetAdaptation(actor: Actor, source: string | undefined) {
+    if (!source) {
+        return;
+    }
+    if (source === 'violence' && !actor.system.sanity.adaptations.violence.isAdapted) {
+        actor.update({
+            "system.sanity.adaptations.violence.incident1": false,
+            "system.sanity.adaptations.violence.incident2": false,
+            "system.sanity.adaptations.violence.incident3": false,
+        });
+    } else if (source === 'helplessness' && !actor.system.sanity.adaptations.helplessness.isAdapted) {
+        actor.update({
+            "system.sanity.adaptations.helplessness.incident1": false,
+            "system.sanity.adaptations.helplessness.incident2": false,
+            "system.sanity.adaptations.helplessness.incident3": false,
         });
     }
 }

@@ -1,3 +1,11 @@
+function getLabel(label: string, source?: string) {
+    return label ?? (
+        source === 'violence' ? "Violence Sanity roll"
+            : source === 'helplessness' ? "Helplessness Sanity roll"
+                : "Sanity roll"
+    )
+}
+
 export async function enrichSanityString(
     data: RegExpMatchArray,
     options: {},
@@ -18,7 +26,7 @@ export async function enrichSanityString(
     }
 
     let icon = createHtmlIcon("fa-brain");
-    let htmlLabel = createHtmlLabel(label ?? "Sanity roll")
+    let htmlLabel = createHtmlLabel(getLabel(label, resultMap.get("source")))
 
     let a = document.createElement("a");
     a.classList.add("inline-roll");
@@ -26,7 +34,7 @@ export async function enrichSanityString(
     a.appendChild(htmlLabel);
     a.dataset['checkType'] = 'sanity-roll';
 
-    resultMap.forEach((value,key)=> {
+    resultMap.forEach((value, key) => {
         a.dataset[key] = value;
     })
 

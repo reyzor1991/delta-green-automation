@@ -1,3 +1,6 @@
+## Version 0.0.5
+- Auto decrease stats when Agent is adapted to helplessness/violence
+
 ## Version 0.0.4
 - Add source to sanity roll
 - Auto set Adaptation incident
