@@ -1,0 +1,13 @@
+{
+  "_id": "WIIa5G0xrEII3iLr",
+  "author": "E9zWf1a6ounUt7Ro",
+  "command": "let {success, failure, label, source} = await foundry.applications.api.DialogV2.wait({ window: 'Sanity Roll Setup', content: `<label>Label</label><input type=\"text\" name=\"label\"/<label>Success</label><input type=\"text\" name=\"success\"/><label>Failure</label><input type=\"text\" name=\"failure\"/><label for=\"source\">Source:</label> <select id=\"source\" name=\"source\"> <option value=\"no\">no</option> <option value=\"violence\">Violence</option> <option value=\"helplessness\">Helplessness</option> </select>`, buttons: [{ action: \"ok\", label: \"Post\", callback: (event, htmlBtn, dialog) => { let form = htmlBtn.closest('.dialog-form'); return { label: form.querySelector('input[name=\"label\"]').value, success: form.querySelector('input[name=\"success\"]').value, failure: form.querySelector('input[name=\"failure\"]').value, source: form.querySelector('[name=\"source\"]').value } } }, {action: \"cancel\", label: \"Cancel\", icon: \"<i class='fa-solid fa-ban'></i>\",}], default: \"ok\" }); if (!success.length || !failure.length) { return } if (source && source === 'no') { source = '' } else { source = `,source:${source}` } let content = `@Sanity[success:${success},failure:${failure}${source}]`; if (label) { content += `{${label}}` } ChatMessage.create({'content': content})",
+  "img": "/icons/magic/control/fear-fright-white.webp",
+  "name": "Sanity Roll",
+  "ownership": {
+    "default": 1
+  },
+  "scope": "global",
+  "type": "script",
+  "_key": "!macros!WIIa5G0xrEII3iLr"
+}

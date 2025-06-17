@@ -1,0 +1,58 @@
+{
+  "id": "delta-green-automation",
+  "title": "Delta Green Automation",
+  "description": "",
+  "version": "0.0.4",
+  "license": "./LICENSE",
+  "authors": [
+    {
+      "name": "Reyzor",
+      "url": "https://github.com/reyzor1991",
+      "discord": "reyzor1991"
+    }
+  ],
+  "languages": [],
+  "esmodules": [
+    "delta-green-automation.mjs"
+  ],
+  "styles": [
+    "delta-green-automation.css"
+  ],
+  "packFolders": [],
+  "packs": [
+    {
+      "name": "delta-green-automation-macros",
+      "label": "Macros",
+      "system": "deltagreen",
+      "path": "packs/macros",
+      "type": "Macro",
+      "flags": {},
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "compatibility": {
+    "minimum": "13.345",
+    "verified": "13.345"
+  },
+  "socket": true,
+  "url": "",
+  "manifest": "https://www.dropbox.com/scl/fi/g5thdce8h6x75xfelr5p8/module.json?rlkey=a00czasf5ilvw9owdi9zwv61t&st=enqj2me5&dl=1",
+  "download": "https://www.dropbox.com/scl/fi/n20tkscz3wp0nkt5eylkv/delta-green-automation.zip?rlkey=36w7c2tqbzfdf7s5ifdekzmpp&st=z200yt1z&dl=1",
+  "relationships": {
+    "systems": [
+      {
+        "id": "deltagreen",
+        "type": "system",
+        "manifest": "https://github.com/TheLastScrub/delta-green-foundry-vtt-system/releases/latest/download/system.json",
+        "compatibility": {
+          "minimum": "1.5.0",
+          "verified": "1.5.0"
+        }
+      }
+    ],
+    "requires": []
+  }
+}
