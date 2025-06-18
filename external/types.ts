@@ -386,6 +386,7 @@ declare global {
 
     class ChatMessage extends FoundryObject {
         content: string;
+        flavor: string;
         isAuthor: boolean;
         isCheckRoll: boolean;
         speaker: any;

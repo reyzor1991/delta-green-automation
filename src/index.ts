@@ -1,6 +1,7 @@
 import {enrichSanityString} from "./enrichers.js";
-import {clickInclineSanityRoll} from "./inline.js";
+import {clickInclineSanityRoll, handleInlineActions,} from "./inline.js";
 import {GlobalRolls} from "./const.js";
+import {htmlClosest} from "./utils.js";
 
 Hooks.on("init", () => {
     // Register custom enricher
@@ -33,3 +34,18 @@ Hooks.on("init", () => {
     }
 
 })
+
+Hooks.once("setup", () => {
+    document.addEventListener("click", (event: MouseEvent) => {
+        let btnWithAction = htmlClosest(event.target, "button[data-action]");
+        // Remove empty style attribute if present
+        if (btnWithAction?.getAttribute('style') === '') {
+            btnWithAction.removeAttribute('style');
+        }
+
+        let message = htmlClosest(event.target, "li[data-message-id]");
+        if (btnWithAction && message && message?.dataset?.messageId) {
+            handleInlineActions(btnWithAction, message?.dataset?.messageId);
+        }
+    });
+});

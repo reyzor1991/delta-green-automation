@@ -108,29 +108,22 @@ async function handleSanityResult(
         let violenceRoll = new Roll("1d6")
         await violenceRoll.evaluate();
         violenceRoll.toMessage({
-            flavor: `${actor.name}'s empathy suffers, loses ${violenceRoll.total} CHA and the same amount from each Bond.`
+            speaker: {
+                actor: actor.id,
+                alias: 'System'
+            },
+            flavor: `${actor.name}'s empathy suffers, loses ${violenceRoll.total} CHA and the same amount from each Bond.<br/><button type="button" data-action="apply-violence-suffering">Apply Suffering</button>`
         })
-
-        actor.update({
-            "system.statistics.cha.value": actor.system.statistics.cha.value - violenceRoll.total
-        })
-        actor.items.contents
-            .filter(i => i.type === 'bond' && i.system.score > 0)
-            .forEach(bond => {
-                bond.update({
-                    "system.score": Math.max(bond.system.score - violenceRoll.total, 0),
-                })
-            })
     }
     if (!isHelplessnessAdapted && actor.system.sanity.adaptations.helplessness.isAdapted) {
         let helplessnessRoll = new Roll("1d6")
         await helplessnessRoll.evaluate();
         helplessnessRoll.toMessage({
-            flavor: `${actor.name}'s personal drive suffers and loses ${helplessnessRoll.total} POW.`
-        })
-
-        actor.update({
-            "system.statistics.pow.value": actor.system.statistics.pow.value - helplessnessRoll.total
+            speaker: {
+                actor: actor.id,
+                alias: 'System'
+            },
+            flavor: `${actor.name}'s personal drive suffers and loses ${helplessnessRoll.total} POW.<br/><button type="button" data-action="apply-helplessness-suffering">Apply Suffering</button>`
         })
     }
 }
@@ -151,5 +144,41 @@ function resetAdaptation(actor: Actor, source: string | undefined) {
             "system.sanity.adaptations.helplessness.incident2": false,
             "system.sanity.adaptations.helplessness.incident3": false,
         });
+    }
+}
+
+export function handleInlineActions(btnWithAction: HTMLElement, messageId: string) {
+    let action = btnWithAction.dataset?.action;
+    let message = game.messages.get(messageId);
+    let actor = message?.speakerActor;
+    if (!action || !message || !actor) {
+        return;
+    }
+
+    console.log(message?.flavor)
+    console.log(btnWithAction.outerHTML)
+
+    if (action === 'apply-violence-suffering') {
+        let total = message.rolls[0].total
+        actor.update({
+            "system.statistics.cha.value": Math.max(actor.system.statistics.cha.value - total, 0)
+        })
+        actor.items.contents
+            .filter(i => i.type === 'bond' && i.system.score > 0)
+            .forEach(bond => {
+                bond.update({
+                    "system.score": Math.max(bond.system.score - total, 0),
+                })
+            })
+        message.update({
+            flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="suffering-applied">Suffering was applied</label>')
+        })
+    } else if (action === 'apply-helplessness-suffering') {
+        actor.update({
+            "system.statistics.pow.value": Math.max(actor.system.statistics.pow.value - message.rolls[0].total, 0)
+        })
+        message.update({
+            flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="suffering-applied">Suffering was applied</label>')
+        })
     }
 }

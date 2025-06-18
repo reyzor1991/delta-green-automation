@@ -1,3 +1,6 @@
+## Version 0.0.6
+- Change auto decrease stats to btn in chat message
+
 ## Version 0.0.5
 - Auto decrease stats when Agent is adapted to helplessness/violence
 
