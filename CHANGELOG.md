@@ -1,3 +1,6 @@
+## Version 0.0.8
+- change logic to message btn, apply/revert san losses
+
 ## Version 0.0.7
 - fix handling not linked actors
 
