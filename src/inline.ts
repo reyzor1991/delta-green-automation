@@ -7,7 +7,13 @@ function getCurrentActor() {
     return actor || null;
 }
 
+function getCurrentSpeaker() {
+    const cls = foundry.utils.getDocumentClass("ChatMessage");
+    return cls.getSpeaker();
+}
+
 export async function clickInclineSanityRoll(event: MouseEvent, options: { success: string, failure: string, source?: string }) {
+    let speaker = getCurrentSpeaker();
     let actor = getCurrentActor();
     if (!actor) {
         return;
@@ -27,14 +33,17 @@ export async function clickInclineSanityRoll(event: MouseEvent, options: { succe
     // Evaluate the roll.
     await roll.evaluate();
     roll.toChat();
-    handleSanityResult(actor, roll, options);
+    handleSanityResult(actor, speaker, roll, options);
 }
 
 async function handleSanityResult(
     actor: Actor,
+    speaker: {},
     roll: {},
     options: { success: string, failure: string, source?: string }
 ) {
+    speaker.alias = 'System'
+
     let formula = roll.isSuccess
         ? options.success
         : options.failure;
@@ -84,9 +93,7 @@ async function handleSanityResult(
         await ChatMessage.create({
             whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
             content: `${actor.name} is temporary insanity`,
-            speaker: {
-                alias: 'System'
-            },
+            speaker,
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
         resetAdaptation(actor, options?.source);
@@ -96,9 +103,7 @@ async function handleSanityResult(
         await ChatMessage.create({
             whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
             content: `${actor.name} reaches their breaking point.`,
-            speaker: {
-                alias: 'System'
-            },
+            speaker,
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
         resetAdaptation(actor, options?.source);
@@ -108,10 +113,7 @@ async function handleSanityResult(
         let violenceRoll = new Roll("1d6")
         await violenceRoll.evaluate();
         violenceRoll.toMessage({
-            speaker: {
-                actor: actor.id,
-                alias: 'System'
-            },
+            speaker,
             flavor: `${actor.name}'s empathy suffers, loses ${violenceRoll.total} CHA and the same amount from each Bond.<br/><button type="button" data-action="apply-violence-suffering">Apply Suffering</button>`
         })
     }
@@ -119,10 +121,7 @@ async function handleSanityResult(
         let helplessnessRoll = new Roll("1d6")
         await helplessnessRoll.evaluate();
         helplessnessRoll.toMessage({
-            speaker: {
-                actor: actor.id,
-                alias: 'System'
-            },
+            speaker,
             flavor: `${actor.name}'s personal drive suffers and loses ${helplessnessRoll.total} POW.<br/><button type="button" data-action="apply-helplessness-suffering">Apply Suffering</button>`
         })
     }
@@ -154,9 +153,6 @@ export function handleInlineActions(btnWithAction: HTMLElement, messageId: strin
     if (!action || !message || !actor) {
         return;
     }
-
-    console.log(message?.flavor)
-    console.log(btnWithAction.outerHTML)
 
     if (action === 'apply-violence-suffering') {
         let total = message.rolls[0].total

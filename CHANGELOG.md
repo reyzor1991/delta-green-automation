@@ -1,3 +1,6 @@
+## Version 0.0.7
+- fix handling not linked actors
+
 ## Version 0.0.6
 - Change auto decrease stats to btn in chat message
 
