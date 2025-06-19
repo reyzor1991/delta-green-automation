@@ -61,26 +61,6 @@ async function handleSanityResult(
         })
     }
 
-    // if (applySanDamage >= 5) {
-    //     await ChatMessage.create({
-    //         whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
-    //         content: `${actor.name} is temporary insanity`,
-    //         speaker,
-    //         style: CONST.CHAT_MESSAGE_STYLES.OTHER
-    //     });
-    //     resetAdaptation(actor, options?.source);
-    // }
-    //
-    // if (!isBreakpoint && actor.system.sanity.breakingPointHit) {
-    //     await ChatMessage.create({
-    //         whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
-    //         content: `${actor.name} reaches their breaking point.`,
-    //         speaker,
-    //         style: CONST.CHAT_MESSAGE_STYLES.OTHER
-    //     });
-    //     resetAdaptation(actor, options?.source);
-    // }
-    //
     // if (!isViolenceAdapted && actor.system.sanity.adaptations.violence.isAdapted) {
     //     let violenceRoll = new Roll("1d6")
     //     await violenceRoll.evaluate();
@@ -97,25 +77,6 @@ async function handleSanityResult(
     //         flavor: `${actor.name}'s personal drive suffers and loses ${helplessnessRoll.total} POW.<br/><button type="button" data-action="apply-helplessness-suffering">Apply Suffering</button>`
     //     })
     // }
-}
-
-function resetAdaptation(actor: Actor, source: string | undefined) {
-    if (!source) {
-        return;
-    }
-    if (source === 'violence' && !actor.system.sanity.adaptations.violence.isAdapted) {
-        actor.update({
-            "system.sanity.adaptations.violence.incident1": false,
-            "system.sanity.adaptations.violence.incident2": false,
-            "system.sanity.adaptations.violence.incident3": false,
-        });
-    } else if (source === 'helplessness' && !actor.system.sanity.adaptations.helplessness.isAdapted) {
-        actor.update({
-            "system.sanity.adaptations.helplessness.incident1": false,
-            "system.sanity.adaptations.helplessness.incident2": false,
-            "system.sanity.adaptations.helplessness.incident3": false,
-        });
-    }
 }
 
 export async function handleInlineActions(btnWithAction: HTMLElement, messageId: string) {
@@ -151,13 +112,14 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
     } else if (action === 'apply-sanity-loses') {
         let applySanDamage = message.rolls[0].total;
         let source = btnWithAction.dataset?.source;
+        let newSanityValue = actor.system.sanity.value - applySanDamage
 
-        // const isBreakpoint = actor.system.sanity.breakingPointHit;
+        const isBreakpoint = actor.system.sanity.breakingPointHit;
         // const isViolenceAdapted = actor.system.sanity.adaptations.violence.isAdapted;
         // const isHelplessnessAdapted = actor.system.sanity.adaptations.helplessness.isAdapted;
 
         let dataForUpdate = {
-            "system.sanity.value": actor.system.sanity.value - applySanDamage
+            "system.sanity.value": newSanityValue,
         }
         let rollbacks = {
             "system.sanity.value": actor.system.sanity.value
@@ -189,6 +151,31 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
             }
         }
 
+        let isTempInsane = applySanDamage >= 5;
+        let isBrokenPoint = !isBreakpoint && newSanityValue <= actor.system.sanity.currentBreakingPoint;
+
+        if (isBrokenPoint || isTempInsane) {
+            if (source) {
+                if (source === 'violence' && !actor.system.sanity.adaptations.violence.isAdapted) {
+                    rollbacks[`system.sanity.adaptations.violence.incident1`] = actor.system.sanity.adaptations.violence.incident1
+                    rollbacks[`system.sanity.adaptations.violence.incident2`] = actor.system.sanity.adaptations.violence.incident2
+                    rollbacks[`system.sanity.adaptations.violence.incident3`] = actor.system.sanity.adaptations.violence.incident3
+
+                    dataForUpdate[`system.sanity.adaptations.violence.incident1`] = false
+                    dataForUpdate[`system.sanity.adaptations.violence.incident2`] = false
+                    dataForUpdate[`system.sanity.adaptations.violence.incident3`] = false
+                } else if (source === 'helplessness' && !actor.system.sanity.adaptations.helplessness.isAdapted) {
+                    rollbacks[`system.sanity.adaptations.helplessness.incident1`] = actor.system.sanity.adaptations.helplessness.incident1
+                    rollbacks[`system.sanity.adaptations.helplessness.incident2`] = actor.system.sanity.adaptations.helplessness.incident2
+                    rollbacks[`system.sanity.adaptations.helplessness.incident3`] = actor.system.sanity.adaptations.helplessness.incident3
+
+                    dataForUpdate[`system.sanity.adaptations.helplessness.incident1`] = false
+                    dataForUpdate[`system.sanity.adaptations.helplessness.incident2`] = false
+                    dataForUpdate[`system.sanity.adaptations.helplessness.incident3`] = false
+                }
+            }
+        }
+
         await actor.update(dataForUpdate);
         ui.notifications.info(`${actor.name} loses ${applySanDamage} sanity`)
 
@@ -200,6 +187,25 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
             },
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<button type="button" data-action="rollback-sanity-loses">Loses were applied <i class="fa fa-undo" aria-hidden="true"></i></button>')
         })
+
+
+        if (isTempInsane) {
+            ChatMessage.create({
+                whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
+                content: `${actor.name} is temporary insanity`,
+                speaker: message.speaker,
+                style: CONST.CHAT_MESSAGE_STYLES.OTHER
+            });
+        }
+
+        if (isBrokenPoint) {
+            ChatMessage.create({
+                whisper: ChatMessage.getWhisperRecipients("GM").map((u) => u.id),
+                content: `${actor.name} reaches their breaking point.`,
+                speaker: message.speaker,
+                style: CONST.CHAT_MESSAGE_STYLES.OTHER
+            });
+        }
     } else if (action === 'rollback-sanity-loses') {
         await actor.update(message.getFlag(moduleName, "rollbacks"));
 

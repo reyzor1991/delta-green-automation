@@ -1,3 +1,6 @@
+## Version 0.0.9
+- post messages about temporary insanity, breaking point
+
 ## Version 0.0.8
 - change logic to message btn, apply/revert san losses
 
