@@ -39,6 +39,18 @@ export async function clickInclineSanityRoll(event: MouseEvent, options: { succe
     handleSanityResult(speaker, roll, options);
 }
 
+function createHtmlTags(tags: (string | undefined)[]) {
+    let filtered = tags.filter(t => !!t) as string[];
+    if (!filtered.length) {
+        return ``;
+    }
+    let htmlTags = filtered.map(t => {
+        return `<span class="tag">${t.toUpperCase()}</span>`;
+    });
+
+    return `<div class="tags">${htmlTags.join("")}</div>`;
+}
+
 async function handleSanityResult(
     speaker: {},
     roll: {},
@@ -57,7 +69,7 @@ async function handleSanityResult(
     if (r.total > 0) {
         r.toMessage({
             speaker,
-            flavor: `Sanity Loss Roll<br/><button type="button" data-action="apply-sanity-loses" ${options.source ? `data-source="${options.source}"` : ""}>Apply Loses</button>`
+            flavor: `<p class="fs1r">Sanity Loss Roll</p>${createHtmlTags([ options.source])}<button type="button" data-action="apply-sanity-loses" ${options.source ? `data-source="${options.source}"` : ""}>Apply Loses</button><br/>`
         })
     }
 

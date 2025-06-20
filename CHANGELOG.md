@@ -1,3 +1,6 @@
+## Version 0.0.10
+- Add style & tags
+
 ## Version 0.0.9
 - post messages about temporary insanity, breaking point
 
