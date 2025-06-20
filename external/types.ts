@@ -209,7 +209,7 @@ declare global {
                 HandlebarsApplicationMixin: Function;
                 ApplicationV2: Function;
                 DialogV2: {
-                    confirm: (a: string) => Promise<boolean | undefined>;
+                    confirm: (data: {}) => Promise<boolean | undefined>;
                 };
             }
         }

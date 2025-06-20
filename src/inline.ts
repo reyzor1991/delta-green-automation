@@ -1,4 +1,5 @@
 import {GlobalRolls, moduleName} from "./const.js";
+import {selectText} from "./utils.js";
 
 function getCurrentActor() {
     const cls = foundry.utils.getDocumentClass("ChatMessage");
@@ -14,7 +15,7 @@ function getCurrentSpeaker() {
 
 export async function clickInclineSanityRoll(event: MouseEvent, options: { success: string, failure: string, source?: string }) {
     let speaker = getCurrentSpeaker();
-    speaker.alias = 'System'
+    // speaker.alias = 'System'
 
     let actor = getCurrentActor();
     if (!actor) {
@@ -56,7 +57,7 @@ async function handleSanityResult(
     roll: {},
     options: { success: string, failure: string, source?: string }
 ) {
-    speaker.alias = 'System'
+    // speaker.alias = 'System'
 
     let formula = roll.isSuccess
         ? options.success
@@ -69,7 +70,7 @@ async function handleSanityResult(
     if (r.total > 0) {
         r.toMessage({
             speaker,
-            flavor: `<p class="fs1r">Sanity Loss Roll</p>${createHtmlTags([ options.source])}<button type="button" data-action="apply-sanity-loses" ${options.source ? `data-source="${options.source}"` : ""}>Apply Loses</button><br/>`
+            flavor: `<p class="fs1r">Sanity Loss Roll</p>${createHtmlTags([options.source])}<button type="button" data-action="apply-sanity-loses" ${options.source ? `data-source="${options.source}"` : ""}>Apply Loses</button><br/>`
         })
     }
 
@@ -122,20 +123,64 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="suffering-applied">Suffering was applied</label>')
         })
     } else if (action === 'apply-sanity-loses') {
+        let activeBonds = actor.itemTypes.bond.filter(b => b.system.score > 0)
+
         let applySanDamage = message.rolls[0].total;
         let source = btnWithAction.dataset?.source;
+        const isBreakpoint = actor.system.sanity.breakingPointHit;
+
+        let dataForUpdate = {}
+        let rollbacks = {}
+        let bondForUpdate = {}
+        let rollbackBonds = {}
+
+        if (actor.system.wp.value > 0 && activeBonds.length) {
+            let isWPUsing = await foundry.applications.api.DialogV2.confirm({
+                window: {title: "Using WP"},
+                content: `Do you want to spend WP to reduce the loss?<br/>${selectText(activeBonds)}`,
+                yes: {
+                    callback: (event: PointerEvent, htmlBtn: HTMLElement, dialog: object) => {
+                        let el = dialog.element as HTMLElement;
+                        return el?.querySelector(`[name="select-list"]`)?.value || false
+                    }
+                }
+            });
+
+            if (isWPUsing) {
+                let wpRoll = new Roll("1d4")
+                await wpRoll.evaluate();
+
+                let wpDecrease = Math.min(wpRoll.total, actor.system.wp.value);
+
+                dataForUpdate["system.wp.value"] = actor.system.wp.value - wpDecrease;
+                rollbacks["system.wp.value"] = actor.system.wp.value;
+
+
+                let selectedBond = actor.items.get(isWPUsing);
+                let score = selectedBond.system.score;
+
+                let wpDecreaseSanLoss = Math.min(wpDecrease, score);
+
+                bondForUpdate = {
+                    [`${isWPUsing}`]: {
+                        ["system.score"]: selectedBond.system.score - wpDecreaseSanLoss,
+                    },
+                }
+                rollbackBonds = {
+                    [`${isWPUsing}`]: {
+                        ["system.score"]: score
+                    },
+                }
+                applySanDamage = Math.max(0, applySanDamage - wpDecreaseSanLoss);
+            }
+        }
         let newSanityValue = actor.system.sanity.value - applySanDamage
 
-        const isBreakpoint = actor.system.sanity.breakingPointHit;
         // const isViolenceAdapted = actor.system.sanity.adaptations.violence.isAdapted;
         // const isHelplessnessAdapted = actor.system.sanity.adaptations.helplessness.isAdapted;
 
-        let dataForUpdate = {
-            "system.sanity.value": newSanityValue,
-        }
-        let rollbacks = {
-            "system.sanity.value": actor.system.sanity.value
-        }
+        dataForUpdate["system.sanity.value"] = newSanityValue;
+        rollbacks["system.sanity.value"] = actor.system.sanity.value;
 
         if (source) {
             let targetSource = undefined
@@ -189,12 +234,18 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         }
 
         await actor.update(dataForUpdate);
+
+        for (let k in bondForUpdate) {
+            await actor.items.get(k).update(bondForUpdate[k]);
+        }
+
         ui.notifications.info(`${actor.name} loses ${applySanDamage} sanity`)
 
         message.update({
             flags: {
                 [moduleName]: {
-                    rollbacks
+                    rollbacks,
+                    rollbackBonds
                 }
             },
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<button type="button" data-action="rollback-sanity-loses">Loses were applied <i class="fa fa-undo" aria-hidden="true"></i></button>')
@@ -220,9 +271,15 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         }
     } else if (action === 'rollback-sanity-loses') {
         await actor.update(message.getFlag(moduleName, "rollbacks"));
+        let rollbackBonds = (message.getFlag(moduleName, "rollbackBonds") || {})
+
+        for (let k in rollbackBonds) {
+            await actor.items.get(k).update(rollbackBonds[k]);
+        }
 
         message.update({
             [`flags.${moduleName}.-=rollbacks`]: null,
+            [`flags.${moduleName}.-=rollbackBonds`]: null,
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="strike">Loses were applied</label>')
         })
     }
