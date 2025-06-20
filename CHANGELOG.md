@@ -1,3 +1,7 @@
+## Version 0.0.11
+- Roll damage btn
+- Apply damage btn
+
 ## Version 0.0.10
 - Add style & tags
 - Using Wp points when lose SAN

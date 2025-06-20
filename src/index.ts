@@ -1,7 +1,7 @@
 import {enrichSanityString} from "./enrichers.js";
 import {clickInclineSanityRoll, handleInlineActions,} from "./inline.js";
-import {GlobalRolls} from "./const.js";
-import {htmlClosest} from "./utils.js";
+import {GlobalRolls, moduleName} from "./const.js";
+import {applyDamage, currentTargets, htmlClosest} from "./utils.js";
 
 Hooks.on("init", () => {
     // Register custom enricher
@@ -49,3 +49,100 @@ Hooks.once("setup", () => {
         }
     });
 });
+
+//Add btn for roll damage
+Hooks.on('renderChatMessageHTML', async (message: ChatMessage, html: HTMLElement) => {
+    if (!message.isAuthor && !message?.isOwner) {
+        return
+    }
+    let speakerActor = message?.speakerActor;
+    if (!message?.isRoll || !speakerActor) {
+        return;
+    }
+    let roll = message.rolls[0];
+    if (roll?.type !== 'weapon' || !roll?.item?._id || !roll.isSuccess) {
+        return
+    }
+
+    // Create the button
+    const btn = document.createElement("button");
+    btn.textContent = "Roll damage";
+    btn.className = "item-roll-damage";
+    btn.dataset.action = "item-roll-damage";
+
+    // Append to the message-content
+    html.querySelector('.message-content')?.appendChild(btn);
+})
+
+function isDamage(message: ChatMessage) {
+    return message.isRoll && message.rolls[0]?.type === 'damage';
+}
+
+function getMessageDamage(message: ChatMessage): number {
+    return message?.rolls?.[0].total || 0;
+}
+
+//Add targets to damage
+Hooks.on('renderChatMessage', async (message: ChatMessage, $html: JQuery<HTMLElement>) => {
+    if (!game.user.isActiveGM || !isDamage(message)) {
+        return;
+    }
+    let damageAmount = getMessageDamage(message);
+    if (!damageAmount) {
+        return;
+    }
+
+    let targetsLayer = $(`<div class="target-layer"><label>Targets</label></div>`);
+    let spanAddTarget = $("<span>", {
+        class: "add-update-target fa-solid fa-crosshairs-simple fa-fw target",
+        "data-tooltip": "<p>Shift + Click - Update Targets</p><p>Click - Add Targets</p><p>Shift + DbClick - Delete Target</p>",
+    });
+    addListenerClickTargetBtn(spanAddTarget, message);
+    targetsLayer.prepend(spanAddTarget);
+
+    let targetsBlock = $(`<div class="target-block"></div>`);
+    targetsBlock.append(targetsLayer);
+
+    let targets = message.getFlag(moduleName, "targets");
+    if (Object.keys(targets || {}).length) {
+        Object.values(targets).forEach((element) => {
+            let token = game.scenes.get(element.sceneId)?.tokens.get(element.tokenId);
+            if (!token) {
+                return;
+            }
+            let targetRow = $(`<section class="target-row" data-sceneId="${element.sceneId}" data-tokenId="${element.tokenId}"></section>`)
+            targetRow.append(`
+                <div class="image" style="background-image:url(${token?.texture?.src})"></div>
+                <div class="name">${token.name}</div>
+                <span class="target-row-btns"></span>
+            `);
+            let damageIcon = $(`<i class="fas fa-user-minus fa-fw" data-tooltip="Apply Damage"></i>`);
+
+            damageIcon.on("click", async () => {
+                applyDamage(token, damageAmount)
+                ui.notifications.info('Damage was applied');
+            });
+
+            targetRow.find(".target-row-btns").append(damageIcon);
+            targetsBlock.append(targetRow);
+        });
+    }
+
+    $html.find('.message-content').append(targetsBlock);
+})
+
+function addListenerClickTargetBtn(spanAddTarget, message) {
+    spanAddTarget.on("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let newTargets = currentTargets();
+
+        if (event.shiftKey) {
+            await message.unsetFlag(moduleName, 'targets');
+            message.setFlag(moduleName, 'targets', newTargets);
+        } else {
+            message.setFlag(moduleName, 'targets', newTargets);
+        }
+    })
+}

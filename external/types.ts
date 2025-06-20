@@ -25,6 +25,7 @@ declare global {
         static on(event: string, callback: (t: string, r: object) => void): number;
         static on(event: string, callback: (app: object, html: JQuery<HTMLElement>) => void): number;
         static on(event: string, callback: (app: object, html: JQuery<HTMLElement>, data: object) => void): number;
+        static on(event: string, callback: (message: ChatMessage, html: HTMLElement) => Promise<void>): number;
         static on(event: string, callback: (message: ChatMessage, html: JQuery<HTMLElement>) => Promise<void>): number;
         static on(event: string, callback: (message: ChatMessage, html: JQuery<HTMLElement>) => void): number;
         static on(event: string, callback: (message: ChatMessage, user: User, options: object, userId: string) => void): number;
@@ -81,8 +82,6 @@ declare global {
         set(module: string, key: string, value: any): Promise<void>;
 
         get(module: string, key: string): any;
-        get(key: "patreon-v3", a: "rules"): object[];
-        get(key: "patreon-v3", a: "rules-sf2e"): object[];
     }
 
     class Collection<T> extends Array<T> {
@@ -396,6 +395,7 @@ declare global {
         }
         rolls: Roll[];
         actor?: Actor;
+        speakerActor?: Actor;
         token?: Token;
         item: Item;
         flags: {}

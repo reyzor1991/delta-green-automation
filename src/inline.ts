@@ -70,7 +70,7 @@ async function handleSanityResult(
     if (r.total > 0) {
         r.toMessage({
             speaker,
-            flavor: `<p class="fs1r">Sanity Loss Roll</p>${createHtmlTags([options.source])}<button type="button" data-action="apply-sanity-loses" ${options.source ? `data-source="${options.source}"` : ""}>Apply Loses</button><br/>`
+            flavor: `<p class="fs1r">Sanity Loss Roll</p>${createHtmlTags([options.source])}<button type="button" data-action="apply-sanity-loses" data-isSuccess=${roll.isSuccess} ${options.source ? `data-source="${options.source}"` : ""}>Apply Loses</button><br/>`
         })
     }
 
@@ -96,11 +96,20 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
     let action = btnWithAction.dataset?.action;
     let message = game.messages.get(messageId);
     let actor = message?.speakerActor;
+    let roll = message.rolls[0];
     if (!action || !message || !actor) {
         return;
     }
 
-    if (action === 'apply-violence-suffering') {
+    if (action === 'item-roll-damage') {
+        let isCritical = roll?.isCritical || false;
+        let weapon = actor.items.get(roll?.item?._id);
+        if (!weapon) {
+            return;
+        }
+
+        weapon.roll(isCritical);
+    } else if (action === 'apply-violence-suffering') {
         let total = message.rolls[0].total
         actor.update({
             "system.statistics.cha.value": Math.max(actor.system.statistics.cha.value - total, 0)
@@ -128,6 +137,7 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         let applySanDamage = message.rolls[0].total;
         let source = btnWithAction.dataset?.source;
         const isBreakpoint = actor.system.sanity.breakingPointHit;
+        const isSuccessRoll = btnWithAction.dataset?.issuccess === 'true'
 
         let dataForUpdate = {}
         let rollbacks = {}
@@ -137,7 +147,7 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         if (actor.system.wp.value > 0 && activeBonds.length) {
             let isWPUsing = await foundry.applications.api.DialogV2.confirm({
                 window: {title: "Using WP"},
-                content: `Do you want to spend WP to reduce the loss?<br/>${selectText(activeBonds)}`,
+                content: `do you want to project your sanity loss onto your bond?<br/>Doing so will cost you 1d4 willpower<br/>${selectText(activeBonds)}`,
                 yes: {
                     callback: (event: PointerEvent, htmlBtn: HTMLElement, dialog: object) => {
                         let el = dialog.element as HTMLElement;
@@ -182,7 +192,7 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         dataForUpdate["system.sanity.value"] = newSanityValue;
         rollbacks["system.sanity.value"] = actor.system.sanity.value;
 
-        if (source) {
+        if (source && !isSuccessRoll) {
             let targetSource = undefined
             if (source === "violence") {
                 if (!actor.system.sanity.adaptations.violence.incident1) {

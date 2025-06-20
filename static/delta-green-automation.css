@@ -24,3 +24,42 @@ div.tags {
         font-size: 0.9em;
     }
 }
+
+
+.target-layer {
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    > label {
+        flex: 1;
+    }
+}
+
+.target-block {
+    .target-row {
+        display: flex;
+        align-items: center;
+        text-align: center;
+
+        .image {
+            width: 40px;
+            height: 40px;
+            background-size: 40px;
+            margin-right: 5px;
+        }
+
+        .fa-user-plus:hover, .fa-user-minus:hover {
+            text-shadow: 0 0 5px #d16623;
+            color: #d16623;
+        }
+    }
+
+    .target-row-btns {
+        margin-left: auto;
+
+        > i {
+            margin: 5px;
+        }
+    }
+}
