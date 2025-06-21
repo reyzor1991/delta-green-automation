@@ -18,8 +18,14 @@ Hooks.on("init", () => {
 
     let superClick = TextEditor._onClickInlineRoll;
     TextEditor._onClickInlineRoll = async function (event: MouseEvent) {
-        const a = event.target?.closest("a.inline-roll");
+        let post = htmlClosest(event.target, "span[data-post-inline]");
+        if (post) {
+            event.preventDefault()
+            handleInlinePost(htmlClosest(post, 'a.inline-roll'))
+            return
+        }
 
+        const a = event.target?.closest("a.inline-roll");
         if (a?.dataset?.checkType) {
             event.preventDefault()
             let type = a.dataset.checkType;
@@ -43,6 +49,23 @@ Hooks.on("init", () => {
     }
 
 })
+
+function handleInlinePost(post: HTMLElement | null) {
+    if (!post) {
+        return;
+    }
+    const clone = post.cloneNode(true);
+    // Find and remove the <i> element with data-post-inline
+    const postIcon = clone.querySelector('span[data-post-inline]');
+    if (postIcon) {
+        postIcon.remove();
+    }
+
+    ChatMessage.create({
+        content: clone.outerHTML,
+        style: CONST.CHAT_MESSAGE_STYLES.OTHER
+    });
+}
 
 Hooks.once("setup", () => {
     document.addEventListener("click", (event: MouseEvent) => {

@@ -15,6 +15,14 @@ function getSkillLabel(label: string, source: string) {
     return localizedSource === locKey ? source.titleCase() : localizedSource;
 }
 
+function addPostIcon(a: HTMLElement, options: {}) {
+    if (options?.relativeTo?.type !== 'text') {
+        return
+    }
+
+    a.append(foundry.utils.parseHTML(`<span data-post-inline><i class="fa fa-comment" ></i></span>`));
+}
+
 export async function enrichSanityString(
     data: RegExpMatchArray,
     options: {},
@@ -46,6 +54,8 @@ export async function enrichSanityString(
     resultMap.forEach((value, key) => {
         a.dataset[key] = value;
     })
+
+    addPostIcon(a, options);
 
     return a;
 }
@@ -82,6 +92,8 @@ export async function enrichSkillString(
     resultMap.forEach((value, key) => {
         a.dataset[key] = value;
     })
+
+    addPostIcon(a, options);
 
     return a
 }

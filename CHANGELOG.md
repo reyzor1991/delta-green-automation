@@ -1,3 +1,6 @@
+## Version 0.0.14
+- Add post icon to journal page
+
 ## Version 0.0.13
 - Inline skill roll
 - - @Skill[key:accounting]{Calculate debit}

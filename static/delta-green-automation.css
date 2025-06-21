@@ -10,18 +10,20 @@
     font-size: 1rem;
 }
 
-div.tags {
-    margin: 5px 0 5px 0;
+#chat .chat-log {
+    div.tags {
+        margin: 5px 0 5px 0;
 
-    span.tag {
-        display: inline-block;
-        padding: 5px 12px;
-        border: 2px solid #006400;
-        border-radius: 999px;
-        color: #006400;
-        background-color: #e6f4e6;
-        font-weight: bold;
-        font-size: 0.9em;
+        span.tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border: 2px solid #006400;
+            border-radius: 999px;
+            color: #006400;
+            background-color: #e6f4e6;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
     }
 }
 
@@ -69,4 +71,18 @@ div.tags {
 .item-roll-damage, [data-action="apply-sanity-loses"], [data-action="rollback-sanity-loses"] {
     width: 100%;
     margin-top: 7px;
+}
+
+
+span[data-post-inline] {
+    margin-left: 5px;
+    border-left: 1px solid var(--content-link-border-color);
+
+    i {
+        margin-left: 2px;
+        padding: 2px;
+    }
+}
+span[data-post-inline]:hover {
+    color: white;
 }
