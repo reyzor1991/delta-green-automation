@@ -1,3 +1,6 @@
+## Version 0.0.12
+- Small css changes
+
 ## Version 0.0.11
 - Roll damage btn
 - Apply damage btn

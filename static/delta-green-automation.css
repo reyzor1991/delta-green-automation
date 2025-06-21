@@ -37,6 +37,8 @@ div.tags {
 }
 
 .target-block {
+    margin: 5px;
+
     .target-row {
         display: flex;
         align-items: center;
@@ -62,4 +64,9 @@ div.tags {
             margin: 5px;
         }
     }
+}
+
+.item-roll-damage, [data-action="apply-sanity-loses"], [data-action="rollback-sanity-loses"] {
+    width: 100%;
+    margin-top: 7px;
 }

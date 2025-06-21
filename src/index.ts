@@ -126,6 +126,7 @@ Hooks.on('renderChatMessage', async (message: ChatMessage, $html: JQuery<HTMLEle
             targetRow.find(".target-row-btns").append(damageIcon);
             targetsBlock.append(targetRow);
         });
+        addListenerDeleteFromTargets(targetsBlock, message)
     }
 
     $html.find('.message-content').append(targetsBlock);
@@ -144,5 +145,19 @@ function addListenerClickTargetBtn(spanAddTarget, message) {
         } else {
             message.setFlag(moduleName, 'targets', newTargets);
         }
+    })
+}
+
+function addListenerDeleteFromTargets(row, message) {
+    row.on("dblclick", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!event.shiftKey) return;
+
+        let tokenid = $(event.target).closest(".target-row").data()?.tokenid;
+        if (!tokenid) return;
+        message.update({
+            [`flags.${moduleName}.targets.-=${tokenid}`]: null,
+        });
     })
 }
