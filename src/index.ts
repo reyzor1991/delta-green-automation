@@ -1,5 +1,5 @@
-import {enrichSanityString} from "./enrichers.js";
-import {clickInclineSanityRoll, handleInlineActions,} from "./inline.js";
+import {enrichSanityString, enrichSkillString} from "./enrichers.js";
+import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
 import {applyDamage, currentTargets, htmlClosest} from "./utils.js";
 
@@ -8,6 +8,10 @@ Hooks.on("init", () => {
     CONFIG.TextEditor.enrichers.push({
         pattern: /@(Sanity)\[([^\]]+)\](?:{([^}]+)})?/g,
         enricher: (match, options) => enrichSanityString(match, options),
+    });
+    CONFIG.TextEditor.enrichers.push({
+        pattern: /@(Skill)\[([^\]]+)\](?:{([^}]+)})?/g,
+        enricher: (match, options) => enrichSkillString(match, options),
     });
 
     GlobalRolls.DGPercentileRoll = CONFIG.Dice.rolls.find(c => c.name === 'DGPercentileRoll');
@@ -20,13 +24,18 @@ Hooks.on("init", () => {
             event.preventDefault()
             let type = a.dataset.checkType;
             if (type === "sanity-roll") {
-                clickInclineSanityRoll(event, {
+                clickInlineSanityRoll(event, {
                     success: a.dataset?.success,
                     failure: a.dataset?.failure,
                     source: a.dataset?.source,
                 });
+            } else if (type === "skill-roll") {
+                clickInlineSkillRoll(event, {
+                    key: a.dataset?.key,
+                    specialTrainingName: a.dataset?.specialTrainingName
+                });
             } else {
-                console.log(`unknown incline roll type: ${type}`);
+                console.log(`unknown inline roll type: ${type}`);
             }
             return
         }

@@ -1,3 +1,8 @@
+## Version 0.0.13
+- Inline skill roll
+- - @Skill[key:accounting]{Calculate debit}
+- - @Skill[key:key-of-skill]{label}
+
 ## Version 0.0.12
 - Small css changes
 
@@ -36,5 +41,6 @@
 - Sanity roll handle crit success - roll min value
 
 ## Version 0.0.1
-- Inline roll sanity -   @Sanity[success:1,failure:1d4]{See dead body}
+- Inline roll sanity
+- @Sanity[success:1,failure:1d4]{See dead body}
 - Automate inline roll sanity decreasing

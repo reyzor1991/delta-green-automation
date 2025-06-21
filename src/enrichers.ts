@@ -1,9 +1,18 @@
-function getLabel(label: string, source?: string) {
+function getSanityLabel(label: string, source?: string) {
     return label ?? (
         source === 'violence' ? "Violence Sanity roll"
             : source === 'helplessness' ? "Helplessness Sanity roll"
                 : "Sanity roll"
     )
+}
+
+function getSkillLabel(label: string, source: string) {
+    if (label) {
+        return label
+    }
+    let locKey = 'DG.Skills.' + source;
+    let localizedSource = game.i18n.localize(locKey);
+    return localizedSource === locKey ? source.titleCase() : localizedSource;
 }
 
 export async function enrichSanityString(
@@ -26,7 +35,7 @@ export async function enrichSanityString(
     }
 
     let icon = createHtmlIcon("fa-brain");
-    let htmlLabel = createHtmlLabel(getLabel(label, resultMap.get("source")))
+    let htmlLabel = createHtmlLabel(getSanityLabel(label, resultMap.get("source")))
 
     let a = document.createElement("a");
     a.classList.add("inline-roll");
@@ -39,6 +48,42 @@ export async function enrichSanityString(
     })
 
     return a;
+}
+
+export async function enrichSkillString(
+    data: RegExpMatchArray,
+    options: {},
+): Promise<HTMLElement | null> {
+    if (data.length < 4) {
+        return null;
+    }
+    const [_match, _skillType, rollParams, label] = data;
+
+    const resultMap = new Map(
+        rollParams.split(',').map(pair => {
+            const [key, value] = pair.split(':');
+            return [key.trim(), value.trim()];
+        })
+    );
+    if (!resultMap.has('key')) {
+        return null
+    }
+
+    let icon = createHtmlIcon("fa-brain");
+    let htmlLabel = createHtmlLabel(getSkillLabel(label, resultMap.get("key")))
+
+    let a = document.createElement("a");
+    a.classList.add("inline-roll");
+    a.appendChild(icon);
+    a.appendChild(htmlLabel);
+    a.dataset['checkType'] = 'skill-roll';
+    a.dataset['key'] = resultMap.get("key");
+
+    resultMap.forEach((value, key) => {
+        a.dataset[key] = value;
+    })
+
+    return a
 }
 
 function createHtmlIcon(iconStyle = "") {

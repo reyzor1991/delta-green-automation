@@ -13,19 +13,7 @@ function getCurrentSpeaker() {
     return cls.getSpeaker();
 }
 
-export async function clickInclineSanityRoll(event: MouseEvent, options: { success: string, failure: string, source?: string }) {
-    let speaker = getCurrentSpeaker();
-    // speaker.alias = 'System'
-
-    let actor = getCurrentActor();
-    if (!actor) {
-        return;
-    }
-
-    const rollOptions = {
-        rollType: "sanity",
-        actor,
-    };
+async function processPercentileRoll(event: MouseEvent, rollOptions: {}) {
     let roll = new GlobalRolls.DGPercentileRoll("1D100", {}, rollOptions);
     if (event.shiftKey || event.which === 3) {
         const dialogData = await roll.showDialog();
@@ -36,6 +24,37 @@ export async function clickInclineSanityRoll(event: MouseEvent, options: { succe
     // Evaluate the roll.
     await roll.evaluate();
     roll.toChat();
+
+    return roll;
+}
+
+export async function clickInlineSkillRoll(event: MouseEvent, options: { key: string, specialTrainingName?: string }) {
+    let actor = getCurrentActor();
+    if (!actor) {
+        return;
+    }
+
+    const rollOptions = {
+        rollType: "skill",
+        actor,
+        key: options.key,
+        specialTrainingName: options.specialTrainingName
+    };
+    await processPercentileRoll(event, rollOptions);
+}
+
+export async function clickInlineSanityRoll(event: MouseEvent, options: { success: string, failure: string, source?: string }) {
+    let speaker = getCurrentSpeaker();
+    let actor = getCurrentActor();
+    if (!actor) {
+        return;
+    }
+
+    const rollOptions = {
+        rollType: "sanity",
+        actor,
+    };
+    let roll = await processPercentileRoll(event, rollOptions);
 
     handleSanityResult(speaker, roll, options);
 }
