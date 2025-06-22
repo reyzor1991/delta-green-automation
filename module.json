@@ -2,7 +2,7 @@
   "id": "delta-green-automation",
   "title": "Delta Green Automation",
   "description": "",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "license": "./LICENSE",
   "authors": [
     {
@@ -11,7 +11,13 @@
       "discord": "reyzor1991"
     }
   ],
-  "languages": [],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
   "esmodules": [
     "delta-green-automation.mjs"
   ],

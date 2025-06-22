@@ -2,6 +2,7 @@ import {enrichSanityString, enrichSkillString} from "./enrichers.js";
 import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
 import {applyDamage, currentTargets, htmlClosest} from "./utils.js";
+import {Settings} from "./settings.js";
 
 Hooks.on("init", () => {
     // Register custom enricher
@@ -48,6 +49,7 @@ Hooks.on("init", () => {
         superClick.call(this, event);
     }
 
+    Settings.init();
 })
 
 function handleInlinePost(post: HTMLElement | null) {
@@ -193,3 +195,37 @@ function addListenerDeleteFromTargets(row, message) {
         });
     })
 }
+
+function handleDyingStatusEffect(actor: Actor, data: object) {
+    if (actor.statuses.has("dead")) {
+        return;
+    }
+
+    if (data?.system?.health?.value === 0) {
+        actor.toggleStatusEffect('dead', {active: true})
+        actor.toggleStatusEffect('unconscious', {active: false})
+
+        ChatMessage.create({
+            content: `Agent ${actor.name} is dead`,
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER
+        });
+    } else if (!actor.statuses.has("unconscious") && (data?.system?.health?.value <= 2 || data?.system?.wp?.value === 0)) {
+        actor.toggleStatusEffect('unconscious', {active: true})
+
+        ChatMessage.create({
+            content: `Agent ${actor.name} is unconscious`,
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER
+        });
+    } else if (data?.system?.wp?.value <= 2 && data?.system?.wp?.value >= 0) {
+        ChatMessage.create({
+            content: `Agent ${actor.name} has a temporary emotional collapse.`,
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER
+        });
+    }
+}
+
+Hooks.on('preUpdateActor', (actor: Actor, data) => {
+    if (Settings.get("dyingStatusEffect")) {
+        handleDyingStatusEffect(actor, data);
+    }
+});

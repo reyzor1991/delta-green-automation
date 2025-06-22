@@ -1,0 +1,16 @@
+{
+  "delta-green-automation": {
+    "SETTINGS": {
+      "Menu": {
+        "automation": {
+          "name": "Automation Settings Menu",
+          "label": "Open menu"
+        }
+      },
+      "dyingStatusEffect": {
+        "name": "Auto add dying status effects",
+        "hint": "Cover unconscious/dead logic"
+      }
+    }
+  }
+}

@@ -1,3 +1,6 @@
+## Version 0.0.15
+- Add automation setting - Auto add dying status effects
+
 ## Version 0.0.14
 - Add post icon to journal page
 
