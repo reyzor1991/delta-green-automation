@@ -1,6 +1,8 @@
 import {GlobalRolls, moduleName} from "./const.js";
 import {selectText} from "./utils.js";
 
+export type InlineOptions = { success: string, failure: string, source?: string, secret?: boolean }
+
 function getCurrentActor() {
     const cls = foundry.utils.getDocumentClass("ChatMessage");
     const speaker = cls.getSpeaker();
@@ -28,7 +30,7 @@ async function processPercentileRoll(event: MouseEvent, rollOptions: {}) {
     return roll;
 }
 
-export async function clickInlineSkillRoll(event: MouseEvent, options: { key: string, specialTrainingName?: string }) {
+export async function clickInlineSkillRoll(event: MouseEvent, options: { key: string, specialTrainingName?: string, secret?: string }) {
     let actor = getCurrentActor();
     if (!actor) {
         return;
@@ -40,10 +42,15 @@ export async function clickInlineSkillRoll(event: MouseEvent, options: { key: st
         key: options.key,
         specialTrainingName: options.specialTrainingName
     };
+
+    if (options?.secret) {
+        rollOptions.rollMode = "blindroll";
+    }
+
     await processPercentileRoll(event, rollOptions);
 }
 
-export async function clickInlineSanityRoll(event: MouseEvent, options: { success: string, failure: string, source?: string }) {
+export async function clickInlineSanityRoll(event: MouseEvent, options: InlineOptions) {
     let speaker = getCurrentSpeaker();
     let actor = getCurrentActor();
     if (!actor) {
@@ -54,6 +61,9 @@ export async function clickInlineSanityRoll(event: MouseEvent, options: { succes
         rollType: "sanity",
         actor,
     };
+    if (options?.secret) {
+        rollOptions.rollMode = "blindroll";
+    }
     let roll = await processPercentileRoll(event, rollOptions);
 
     handleSanityResult(speaker, roll, options);
@@ -74,23 +84,35 @@ function createHtmlTags(tags: (string | undefined)[]) {
 async function handleSanityResult(
     speaker: {},
     roll: {},
-    options: { success: string, failure: string, source?: string }
+    inlineOptions: InlineOptions
 ) {
     // speaker.alias = 'System'
 
     let formula = roll.isSuccess
-        ? options.success
-        : options.failure;
+        ? inlineOptions.success
+        : inlineOptions.failure;
 
     let r = new Roll(formula)
     let isCritFailure = !roll.isSuccess && roll.isCritical;
     let isCritSuccess = roll.isSuccess && roll.isCritical;
     await r.evaluate({maximize: isCritFailure, minimize: isCritSuccess});
     if (r.total > 0) {
+        const privateSanSetting = game.settings.get("deltagreen", "keepSanityPrivate");
+        let options = {}
+        let flags = {}
+        if ((privateSanSetting || inlineOptions?.secret) && !game.user.isGM) {
+            options.rollMode = "blindroll";
+            flags = {
+                [moduleName]: {
+                    needToHide: true
+                }
+            }
+        }
         r.toMessage({
+            flags,
             speaker,
-            flavor: `<p class="fs1r">Sanity Loss Roll</p>${createHtmlTags([options.source])}<button type="button" data-action="apply-sanity-loses" data-isSuccess=${roll.isSuccess} ${options.source ? `data-source="${options.source}"` : ""}>Apply Loses</button><br/>`
-        })
+            flavor: `<p class="fs1r">Sanity Loss Roll</p>${createHtmlTags([inlineOptions.source])}<button type="button" data-action="apply-sanity-loses" data-isSuccess=${roll.isSuccess} ${inlineOptions.source ? `data-source="${inlineOptions.source}"` : ""}>Apply Loses</button><br/>`
+        }, options);
     }
 
     // if (!isViolenceAdapted && actor.system.sanity.adaptations.violence.isAdapted) {
@@ -183,7 +205,6 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
 
                 dataForUpdate["system.wp.value"] = actor.system.wp.value - wpDecrease;
                 rollbacks["system.wp.value"] = actor.system.wp.value;
-
 
                 let selectedBond = actor.items.get(isWPUsing);
                 let score = selectedBond.system.score;

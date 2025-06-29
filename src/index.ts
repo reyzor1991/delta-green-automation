@@ -1,5 +1,5 @@
 import {enrichSanityString, enrichSkillString} from "./enrichers.js";
-import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions,} from "./inline.js";
+import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions, InlineOptions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
 import {applyDamage, currentTargets, htmlClosest} from "./utils.js";
 import {Settings} from "./settings.js";
@@ -31,14 +31,11 @@ Hooks.on("init", () => {
             event.preventDefault()
             let type = a.dataset.checkType;
             if (type === "sanity-roll") {
-                clickInlineSanityRoll(event, {
-                    success: a.dataset?.success,
-                    failure: a.dataset?.failure,
-                    source: a.dataset?.source,
-                });
+                clickInlineSanityRoll(event, a.dataset as InlineOptions);
             } else if (type === "skill-roll") {
                 clickInlineSkillRoll(event, {
                     key: a.dataset?.key,
+                    secret: a.dataset?.secret,
                     specialTrainingName: a.dataset?.specialTrainingName
                 });
             } else {
@@ -86,6 +83,9 @@ Hooks.once("setup", () => {
 
 //Add btn for roll damage
 Hooks.on('renderChatMessageHTML', async (message: ChatMessage, html: HTMLElement) => {
+    if (message.getFlag(moduleName, "needToHide") && !game.user.isGM) {
+        html.style.display = "none";
+    }
     if (!message.isAuthor && !message?.isOwner) {
         return
     }

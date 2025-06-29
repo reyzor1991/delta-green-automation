@@ -1,3 +1,6 @@
+## Version 0.0.16
+- Add secret options for inline rolls
+
 ## Version 0.0.15
 - Add automation setting - Auto add dying status effects
 
