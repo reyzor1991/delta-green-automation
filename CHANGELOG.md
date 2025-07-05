@@ -1,6 +1,7 @@
 ## Version 0.0.17
 - Add Effects Item
 - Add Action Item
+- Example of effect rules [{"type":"targetModification","value":20,"skill":"drive"}]
 
 ## Version 0.0.16
 - Add secret options for inline rolls

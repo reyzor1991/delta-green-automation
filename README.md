@@ -1,3 +1,6 @@
+## Effect Rules
+- [{"type":"targetModification","value":20,"skill":"drive"}]
+
 ## Inline Rolls
 - Sanity
 - - @Sanity[success:1,failure:1d4]{See dead body}
