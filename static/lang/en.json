@@ -1,4 +1,12 @@
 {
+  "TYPES": {
+    "Item": {
+      "delta-green-automation": {
+        "action": "Action",
+        "effect": "Effect"
+      }
+    }
+  },
   "delta-green-automation": {
     "SETTINGS": {
       "Menu": {

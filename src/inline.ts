@@ -1,19 +1,7 @@
 import {GlobalRolls, moduleName} from "./const.js";
-import {selectText} from "./utils.js";
+import {getCurrentActor, getCurrentSpeaker, selectText} from "./utils.js";
 
 export type InlineOptions = { success: string, failure: string, source?: string, secret?: boolean }
-
-function getCurrentActor() {
-    const cls = foundry.utils.getDocumentClass("ChatMessage");
-    const speaker = cls.getSpeaker();
-    const actor = cls.getSpeakerActor(speaker);
-    return actor || null;
-}
-
-function getCurrentSpeaker() {
-    const cls = foundry.utils.getDocumentClass("ChatMessage");
-    return cls.getSpeaker();
-}
 
 async function processPercentileRoll(event: MouseEvent, rollOptions: {}) {
     let roll = new GlobalRolls.DGPercentileRoll("1D100", {}, rollOptions);

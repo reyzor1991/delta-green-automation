@@ -31,3 +31,15 @@ export function applyDamage(token: Token, damageAmount: number, multiplier: numb
         ["system.health.value"]: Math.max(token?.actor?.system?.health?.value - damageAfterProtection, 0)
     });
 }
+
+export function getCurrentActor() {
+    const cls = foundry.utils.getDocumentClass("ChatMessage");
+    const speaker = cls.getSpeaker();
+    const actor = cls.getSpeakerActor(speaker);
+    return actor || null;
+}
+
+export function getCurrentSpeaker() {
+    const cls = foundry.utils.getDocumentClass("ChatMessage");
+    return cls.getSpeaker();
+}

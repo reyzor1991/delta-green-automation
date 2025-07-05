@@ -60,5 +60,11 @@
       }
     ],
     "requires": []
+  },
+  "documentTypes": {
+    "Item": {
+      "action": {},
+      "effect": {}
+    }
   }
 }

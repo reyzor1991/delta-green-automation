@@ -1,10 +1,17 @@
 import {enrichSanityString, enrichSkillString} from "./enrichers.js";
 import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions, InlineOptions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
-import {applyDamage, currentTargets, htmlClosest} from "./utils.js";
+import {applyDamage, currentTargets, getCurrentActor, htmlClosest} from "./utils.js";
 import {Settings} from "./settings.js";
+import {ActionDataModel, ActionsForm, ActionSheet} from "./action.js";
+import {EffectDataModel, EffectsForm, EffectSheet} from "./effect.js";
+import {applyRule, isValidRules, sum, VALID_RULES_TYPES} from "./rules.js";
 
 Hooks.on("init", () => {
+    Handlebars.registerHelper("json", (data: unknown): string => {
+        return JSON.stringify(data);
+    });
+
     // Register custom enricher
     CONFIG.TextEditor.enrichers.push({
         pattern: /@(Sanity)\[([^\]]+)\](?:{([^}]+)})?/g,
@@ -66,7 +73,7 @@ function handleInlinePost(post: HTMLElement | null) {
     });
 }
 
-Hooks.once("setup", () => {
+Hooks.once("setup", async () => {
     document.addEventListener("click", (event: MouseEvent) => {
         let btnWithAction = htmlClosest(event.target, "button[data-action]");
         // Remove empty style attribute if present
@@ -79,6 +86,89 @@ Hooks.once("setup", () => {
             handleInlineActions(btnWithAction, message?.dataset?.messageId);
         }
     });
+
+    Object.assign(CONFIG.Item.dataModels, {
+        [`${moduleName}.action`]: ActionDataModel,
+        [`${moduleName}.effect`]: EffectDataModel
+    });
+
+    foundry.documents.collections.Items.registerSheet(
+        "deltagreen",
+        ActionSheet,
+        {types: [`${moduleName}.action`], makeDefault: true}
+    );
+
+    foundry.documents.collections.Items.registerSheet(
+        "deltagreen",
+        EffectSheet,
+        {types: [`${moduleName}.effect`], makeDefault: true}
+    );
+
+    let origin = CONFIG.Item.documentClass
+
+    class Effect extends origin {
+
+    }
+
+    class Action extends origin {
+        async createChatMessage() {
+            let enrichedDescription =
+                await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+                    this.system.description,
+                    {async: true}
+                )
+
+            return ChatMessage.create({
+                style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+                speaker: getCurrentActor(),
+                content: await renderTemplate(`modules/${moduleName}/templates/basic-chat-card.hbs`, {
+                    item: this,
+                    enrichedDescription
+                }),
+            })
+        }
+    }
+
+    CONFIG.Item.moduleClasses = {}
+    CONFIG.Item.moduleClasses[`${moduleName}.action`] = Action;
+    CONFIG.Item.moduleClasses[`${moduleName}.effect`] = Effect;
+
+    CONFIG.Item.documentClass = new Proxy(origin, {
+        construct(_target, args) {
+            let source = args[0];
+            if (source?.type?.startsWith(moduleName)) {
+                let itemClass = CONFIG.Item.moduleClasses[source.type];
+                if (itemClass) {
+                    return new itemClass(...args);
+                }
+            }
+            return new origin(...args);
+        },
+    });
+
+    let oriding_prepareAgentData = CONFIG.Actor.documentClass.prototype._prepareAgentData;
+    CONFIG.Actor.documentClass.prototype._prepareAgentData = function (agent) {
+        oriding_prepareAgentData.call(this, agent);
+        let allRules = agent?.itemTypes?.[`${moduleName}.effect`]
+            .filter(e => e.system.rules.length)
+            .map(e => e.system.rules)
+            .flat();
+
+        let validRules = allRules
+            .filter(r => VALID_RULES_TYPES.includes(r.type))
+            .filter(r => isValidRules(r));
+
+        validRules.forEach(r => {
+            applyRule(agent, r);
+        })
+
+        Object.values(agent.system.skills).filter(skill => skill?.modifications).forEach(skill => {
+            //TODO: logic about combat action max +40 for bonus any penalties
+            // for other possible any bonus any penalties
+            let modificationValue = sum(skill?.modifications);
+            skill.targetProficiency = skill.proficiency + modificationValue
+        })
+    }
 });
 
 //Add btn for roll damage
@@ -228,4 +318,22 @@ Hooks.on('preUpdateActor', (actor: Actor, data) => {
     if (Settings.get("dyingStatusEffect")) {
         handleDyingStatusEffect(actor, data);
     }
+});
+
+Hooks.on('getActorSheetHeaderButtons', async (sheet: object, buttons: object[]) => {
+    buttons.unshift({
+        label: "Effects",
+        icon: "fa-regular fa-circle-dot",
+        class: ["effects"],
+        onclick: () => {
+            new EffectsForm({actor: sheet.object}).render(true);
+        },
+    }, {
+        label: "Actions",
+        icon: "fa-regular fa-circle-dot",
+        class: ["actions"],
+        onclick: () => {
+            new ActionsForm({actor: sheet.object}).render(true);
+        },
+    });
 });

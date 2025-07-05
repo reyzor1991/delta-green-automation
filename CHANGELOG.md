@@ -1,3 +1,7 @@
+## Version 0.0.17
+- Add Effects Item
+- Add Action Item
+
 ## Version 0.0.16
 - Add secret options for inline rolls
 

@@ -1,0 +1,12 @@
+<div style="overflow-y:auto">
+    <ul class="list-area">
+        {{#each effects as |item|}}
+            <li data-id="{{item.id}}">
+                <label class="label-row">
+                    {{item.name}}
+                    <i class="remove-row fas fa-trash"></i></a>
+                </label>
+            </li>
+        {{/each}}
+    </ul>
+</div>
