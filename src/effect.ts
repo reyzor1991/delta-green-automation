@@ -113,8 +113,6 @@ export class EffectsForm extends foundry.applications.api.HandlebarsApplicationM
         const html = $(htmlElement);
         const form = this;
 
-        console.log('add')
-
         html.on("click", ".remove-row", async function (event: Event) {
             event.preventDefault();
             event.stopPropagation();

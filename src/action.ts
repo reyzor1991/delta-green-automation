@@ -100,8 +100,6 @@ export class ActionsForm extends foundry.applications.api.HandlebarsApplicationM
         const html = $(htmlElement);
         const form = this;
 
-        console.log('add')
-
         html.on("click", ".remove-row", async function (event: Event) {
             event.preventDefault();
             event.stopPropagation();
@@ -109,6 +107,14 @@ export class ActionsForm extends foundry.applications.api.HandlebarsApplicationM
             if (!id) return;
             await form.actor.items.get(id).delete()
             form.render()
+        });
+
+        html.on("click", ".item-img", async function (event: Event) {
+            event.preventDefault();
+            event.stopPropagation();
+            let id = $(this).closest('li').data()?.id;
+            if (!id) return;
+            await form.actor.items.get(id)?.createChatMessage()
         });
     }
 }
