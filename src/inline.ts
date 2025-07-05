@@ -320,5 +320,12 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
             [`flags.${moduleName}.-=rollbackBonds`]: null,
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="strike">Loses were applied</label>')
         })
+    } else if (action === 'rollback-skill-failure-state') {
+        await actor.update(message.getFlag(moduleName, "rollbacks"));
+
+        message.update({
+            [`flags.${moduleName}.-=rollbacks`]: null,
+            flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="strike">Failure state was applied</label>')
+        })
     }
 }

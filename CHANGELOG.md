@@ -1,3 +1,6 @@
+## Version 0.0.18
+- Auto adding failure state to skill (setting)
+
 ## Version 0.0.17
 - Add Effects Item
 - Add Action Item

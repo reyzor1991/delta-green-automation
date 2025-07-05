@@ -337,3 +337,45 @@ Hooks.on('getActorSheetHeaderButtons', async (sheet: object, buttons: object[]) 
         },
     });
 });
+
+Hooks.on('createChatMessage', async (message: ChatMessage) => {
+    if (!Settings.get("failureSkills")) {
+        return;
+    }
+    let actor = message.speakerActor;
+    if (!game.user.isActiveGM || !message.isRoll || !actor) {
+        return;
+    }
+    let roll = message.rolls[0]
+    if (!roll || roll?.isSuccess) {
+        return;
+    }
+    if (roll?.options?.rollType !== 'skill') {
+        return
+    }
+
+    let isSkill = actor.system.skills[roll?.options?.key];
+    let skill = isSkill ? actor.system.skills[roll?.options?.key] : actor.system.typedSkills[roll?.options?.key];
+    if (!skill || skill?.failure) {
+        return;
+    }
+
+
+    let keyForUpdate = 'system.' + (isSkill ? 'skills.' : 'typedSkills.') + `${roll?.options?.key}.failure`;
+
+    let rollbacks = {}
+    rollbacks[keyForUpdate] = false;
+
+    actor.update({
+        [keyForUpdate]: true,
+    })
+
+    message.update({
+        flags: {
+            [moduleName]: {
+                rollbacks
+            }
+        },
+        flavor: message.flavor+`<button type="button" data-action="rollback-skill-failure-state">Failure state was applied <i class="fa fa-undo" aria-hidden="true"></i></button>`
+    })
+})

@@ -18,6 +18,10 @@
       "dyingStatusEffect": {
         "name": "Auto add dying status effects",
         "hint": "Cover unconscious/dead logic"
+      },
+      "failureSkills": {
+        "name": "Auto adding failure state to skill",
+        "hint": ""
       }
     }
   }

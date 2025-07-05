@@ -80,6 +80,12 @@ class AutomationSettings extends SubSettings {
                 default: false,
                 type: Boolean,
             },
+            failureSkills: {
+                name: `${moduleName}.SETTINGS.failureSkills.name`,
+                hint: `${moduleName}.SETTINGS.failureSkills.hint`,
+                default: false,
+                type: Boolean,
+            },
         };
     }
 }
