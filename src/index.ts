@@ -303,12 +303,12 @@ function handleDyingStatusEffect(actor: Actor, data: object) {
         actor.toggleStatusEffect('unconscious', {active: true})
 
         ChatMessage.create({
-            content: `Agent ${actor.name} is unconscious`,
+            content: game.i18n.format("delta-green-automation.messages.damage.unconscious", {actorname: actor.name,}),
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
     } else if (data?.system?.wp?.value <= 2 && data?.system?.wp?.value >= 0) {
         ChatMessage.create({
-            content: `Agent ${actor.name} has a temporary emotional collapse.`,
+            content: game.i18n.format("delta-green-automation.messages.damage.collapse", {actorname: actor.name,}),
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
     }
@@ -376,6 +376,6 @@ Hooks.on('createChatMessage', async (message: ChatMessage) => {
                 rollbacks
             }
         },
-        content: message.content+`<br/><button type="button" data-action="rollback-skill-failure-state">You are learning from your mistakes, the checkbox was marked <i class="fa fa-undo" aria-hidden="true"></i></button>`
+        content: message.content+`<br/><button type="button" data-action="rollback-skill-failure-state"> ${game.i18n.localize("delta-green-automation.messages.skillsmark.marked")} <i class="fa fa-undo" aria-hidden="true"></i></button>`
     })
 })

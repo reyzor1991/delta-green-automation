@@ -23,6 +23,16 @@
         "name": "Auto adding failure state to skill",
         "hint": ""
       }
+    },
+	"messages": {
+      "skillsmark": {
+        "marked": "You are learning from your mistakes, the checkbox was marked",
+        "unmarked": "The checkbox was unmarked"
+      },
+      "damage": {
+        "unconscious": "Agent {actorname} is unconscious.",
+        "collapse": "Agent {actorname} has a temporary emotional collapse."
+      }
     }
   }
 }

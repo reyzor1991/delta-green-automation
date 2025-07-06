@@ -327,8 +327,8 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         toggleAllSkillFailures(rollbackFlag)
 
         let text = btnWithAction.outerHTML?.includes("unmarked")
-            ? "You are learning from your mistakes, the checkbox was marked"
-            : "The checkbox was unmarked"
+            ? game.i18n.localize(`delta-green-automation.messages.skillsmark.marked`)
+            : game.i18n.localize(`delta-green-automation.messages.skillsmark.unmarked`)
 
         message.update({
             [`flags.${moduleName}.rollbacks`]: rollbackFlag,
