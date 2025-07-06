@@ -1,0 +1,38 @@
+{
+  "TYPES": {
+    "Item": {
+      "delta-green-automation": {
+        "action": "Acción",
+        "effect": "Efecto"
+      }
+    }
+  },
+  "delta-green-automation": {
+    "SETTINGS": {
+      "Menu": {
+        "automation": {
+          "name": "Menú de automatizaciones",
+          "label": "Abrir menú"
+        }
+      },
+      "dyingStatusEffect": {
+        "name": "Añadir efecto de estado moribundo",
+        "hint": "Basadas en las reglas de inconsciencia/muerte"
+      },
+      "failureSkills": {
+        "name": "Añadir marca de habilidad fallada",
+        "hint": "Activa la casilla de prueba de habilidad al fallar"
+      }
+    },
+	"messages": {
+      "skillsmark": {
+        "marked": "Estás aprendiendo de tus errores, la habilidad se ha marcado",
+        "unmarked": "Marca de habilidad quitada"
+      },
+      "damage": {
+        "unconscious": "El agente {actorname} ha quedado inconsciente.",
+        "collapse": "El agente {actorname} ha sufrido un colapso emocional."
+      }	  
+    }
+  }
+}
