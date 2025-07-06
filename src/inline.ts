@@ -321,11 +321,22 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="strike">Loses were applied</label>')
         })
     } else if (action === 'rollback-skill-failure-state') {
-        await actor.update(message.getFlag(moduleName, "rollbacks"));
+        let rollbackFlag = message.getFlag(moduleName, "rollbacks");
+        await actor.update(rollbackFlag);
+
+        toggleAllSkillFailures(rollbackFlag)
+
+        let type = btnWithAction.outerHTML?.includes("unmarked") ? "marked" : "unmarked"
 
         message.update({
-            [`flags.${moduleName}.-=rollbacks`]: null,
-            flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="strike">Failure state was applied</label>')
+            [`flags.${moduleName}.rollbacks`]: rollbackFlag,
+            content: message.content.replace(btnWithAction.outerHTML, `<button type="button" data-action="rollback-skill-failure-state">You are learning from your mistakes, the checkbox was ${type} <i class="fa fa-undo" aria-hidden="true"></i></button>`)
         })
+    }
+}
+
+function toggleAllSkillFailures(data) {
+    for (const skill of Object.values(data.system.skills)) {
+        skill.failure = !skill.failure;
     }
 }

@@ -1,3 +1,7 @@
+## Version 0.0.19
+- Change text for failure state btn
+- Move failure state btn at bottom
+
 ## Version 0.0.18
 - Auto adding failure state to skill (setting)
 
