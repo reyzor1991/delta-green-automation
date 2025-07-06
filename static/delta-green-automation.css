@@ -118,3 +118,7 @@ span[data-post-inline]:hover {
         margin-right: 10px;
     }
 }
+
+[data-action="rollback-skill-failure-state"] {
+    width: 100%;
+}

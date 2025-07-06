@@ -326,11 +326,13 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
 
         toggleAllSkillFailures(rollbackFlag)
 
-        let type = btnWithAction.outerHTML?.includes("unmarked") ? "marked" : "unmarked"
+        let text = btnWithAction.outerHTML?.includes("unmarked")
+            ? "You are learning from your mistakes, the checkbox was marked"
+            : "The checkbox was unmarked"
 
         message.update({
             [`flags.${moduleName}.rollbacks`]: rollbackFlag,
-            content: message.content.replace(btnWithAction.outerHTML, `<button type="button" data-action="rollback-skill-failure-state">You are learning from your mistakes, the checkbox was ${type} <i class="fa fa-undo" aria-hidden="true"></i></button>`)
+            content: message.content.replace(btnWithAction.outerHTML, `<button type="button" data-action="rollback-skill-failure-state">${text} <i class="fa fa-undo" aria-hidden="true"></i></button>`)
         })
     }
 }

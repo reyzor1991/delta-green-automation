@@ -376,6 +376,6 @@ Hooks.on('createChatMessage', async (message: ChatMessage) => {
                 rollbacks
             }
         },
-        content: message.content+`<button type="button" data-action="rollback-skill-failure-state">You are learning from your mistakes, the checkbox was marked <i class="fa fa-undo" aria-hidden="true"></i></button>`
+        content: message.content+`<br/><button type="button" data-action="rollback-skill-failure-state">You are learning from your mistakes, the checkbox was marked <i class="fa fa-undo" aria-hidden="true"></i></button>`
     })
 })

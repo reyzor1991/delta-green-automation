@@ -1,3 +1,6 @@
+## Version 0.0.20
+- Change text for failure state btn
+
 ## Version 0.0.19
 - Change text for failure state btn
 - Move failure state btn at bottom
