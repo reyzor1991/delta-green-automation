@@ -1,5 +1,5 @@
 import {GlobalRolls, moduleName} from "./const.js";
-import {getCurrentActor, getCurrentSpeaker, selectText} from "./utils.js";
+import {getCurrentActor, getCurrentSpeaker, localize, selectText} from "./utils.js";
 
 export type InlineOptions = { success: string, failure: string, source?: string, secret?: boolean }
 
@@ -74,8 +74,6 @@ async function handleSanityResult(
     roll: {},
     inlineOptions: InlineOptions
 ) {
-    // speaker.alias = 'System'
-
     let formula = roll.isSuccess
         ? inlineOptions.success
         : inlineOptions.failure;
@@ -327,8 +325,8 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         toggleAllSkillFailures(rollbackFlag)
 
         let text = btnWithAction.outerHTML?.includes("unmarked")
-            ? game.i18n.localize(`delta-green-automation.messages.skillsmark.marked`)
-            : game.i18n.localize(`delta-green-automation.messages.skillsmark.unmarked`)
+            ? localize(`${moduleName}.messages.skillsmark.marked`)
+            : localize(`${moduleName}.messages.skillsmark.unmarked`)
 
         message.update({
             [`flags.${moduleName}.rollbacks`]: rollbackFlag,

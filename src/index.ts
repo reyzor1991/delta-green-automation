@@ -1,7 +1,7 @@
 import {enrichSanityString, enrichSkillString} from "./enrichers.js";
 import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions, InlineOptions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
-import {applyDamage, currentTargets, getCurrentActor, htmlClosest} from "./utils.js";
+import {applyDamage, currentTargets, getCurrentActor, htmlClosest, localize, localizeFormat} from "./utils.js";
 import {Settings} from "./settings.js";
 import {ActionDataModel, ActionsForm, ActionSheet} from "./action.js";
 import {EffectDataModel, EffectsForm, EffectSheet} from "./effect.js";
@@ -303,12 +303,12 @@ function handleDyingStatusEffect(actor: Actor, data: object) {
         actor.toggleStatusEffect('unconscious', {active: true})
 
         ChatMessage.create({
-            content: game.i18n.format("delta-green-automation.messages.damage.unconscious", {actorname: actor.name,}),
+            content: localizeFormat(`${moduleName}.messages.damage.unconscious`, {actorname: actor.name,}),
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
     } else if (data?.system?.wp?.value <= 2 && data?.system?.wp?.value >= 0) {
         ChatMessage.create({
-            content: game.i18n.format("delta-green-automation.messages.damage.collapse", {actorname: actor.name,}),
+            content: localizeFormat(`${moduleName}.messages.damage.collapse`, {actorname: actor.name,}),
             style: CONST.CHAT_MESSAGE_STYLES.OTHER
         });
     }
@@ -370,12 +370,13 @@ Hooks.on('createChatMessage', async (message: ChatMessage) => {
         [keyForUpdate]: true,
     })
 
+    let text = localize(`${moduleName}.messages.skillsmark.marked`);
     message.update({
         flags: {
             [moduleName]: {
                 rollbacks
             }
         },
-        content: message.content+`<br/><button type="button" data-action="rollback-skill-failure-state"> ${game.i18n.localize("delta-green-automation.messages.skillsmark.marked")} <i class="fa fa-undo" aria-hidden="true"></i></button>`
+        content: message.content+`<br/><button type="button" data-action="rollback-skill-failure-state">${text}<i class="fa fa-undo" aria-hidden="true"></i></button>`
     })
 })

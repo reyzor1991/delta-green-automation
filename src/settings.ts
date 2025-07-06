@@ -1,4 +1,5 @@
 import {moduleName} from "./const.js";
+import {localize} from "./utils.js";
 
 abstract class SubSettings extends FormApplication {
 
@@ -100,8 +101,8 @@ export class Settings {
     static init() {
 
         game.settings.registerMenu(moduleName, "automation", {
-            name: game.i18n.localize(`${moduleName}.SETTINGS.Menu.automation.name`),
-            label: game.i18n.localize(`${moduleName}.SETTINGS.Menu.automation.label`),
+            name: localize(`${moduleName}.SETTINGS.Menu.automation.name`),
+            label: localize(`${moduleName}.SETTINGS.Menu.automation.label`),
             hint: "",
             icon: "fa-solid fa-dice",
             type: AutomationSettings,

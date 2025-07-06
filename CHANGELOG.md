@@ -1,3 +1,6 @@
+## Version 0.0.21
+- Added spanish (José Lozano)
+
 ## Version 0.0.20
 - Change text for failure state btn
 

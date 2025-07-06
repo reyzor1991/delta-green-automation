@@ -1,3 +1,5 @@
+import {localize} from "./utils.js";
+
 function getSanityLabel(label: string, source?: string) {
     return label ?? (
         source === 'violence' ? "Violence Sanity roll"
@@ -11,7 +13,7 @@ function getSkillLabel(label: string, source: string) {
         return label
     }
     let locKey = 'DG.Skills.' + source;
-    let localizedSource = game.i18n.localize(locKey);
+    let localizedSource = localize(locKey);
     return localizedSource === locKey ? source.titleCase() : localizedSource;
 }
 

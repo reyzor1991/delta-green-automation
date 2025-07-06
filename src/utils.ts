@@ -43,3 +43,11 @@ export function getCurrentSpeaker() {
     const cls = foundry.utils.getDocumentClass("ChatMessage");
     return cls.getSpeaker();
 }
+
+export function localize(text: string): string {
+    return game.i18n.localize(text)
+}
+
+export function localizeFormat(text: string, data: object): string {
+    return game.i18n.format(text, data);
+}
