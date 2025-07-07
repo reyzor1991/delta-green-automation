@@ -119,6 +119,24 @@ span[data-post-inline]:hover {
     }
 }
 
+.rollback-section {
+    order: 99;
+    display: flex;
+    flex-direction: column;
+}
+
 [data-action="rollback-skill-failure-state"] {
-    width: 100%;
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 16px;
+    margin-left: 5px;
+    border-radius: 10%;
+    background-color: #ccc;
+
+    i {
+        margin-left: 5px;
+    }
 }

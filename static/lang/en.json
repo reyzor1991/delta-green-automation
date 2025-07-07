@@ -24,10 +24,12 @@
         "hint": ""
       }
     },
-	"messages": {
+    "messages": {
       "skillsmark": {
         "marked": "You are learning from your mistakes, the checkbox was marked",
-        "unmarked": "The checkbox was unmarked"
+        "unmarked": "The checkbox was unmarked",
+        "undo": "Undo",
+        "redo": "Redo"
       },
       "damage": {
         "unconscious": "Agent {actorname} is unconscious.",

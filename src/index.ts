@@ -338,7 +338,7 @@ Hooks.on('getActorSheetHeaderButtons', async (sheet: object, buttons: object[]) 
     });
 });
 
-Hooks.on('createChatMessage', async (message: ChatMessage) => {
+Hooks.on('preCreateChatMessage', (message: ChatMessage) => {
     if (!Settings.get("failureSkills")) {
         return;
     }
@@ -360,7 +360,6 @@ Hooks.on('createChatMessage', async (message: ChatMessage) => {
         return;
     }
 
-
     let keyForUpdate = 'system.' + (isSkill ? 'skills.' : 'typedSkills.') + `${roll?.options?.key}.failure`;
 
     let rollbacks = {}
@@ -371,12 +370,14 @@ Hooks.on('createChatMessage', async (message: ChatMessage) => {
     })
 
     let text = localize(`${moduleName}.messages.skillsmark.marked`);
-    message.update({
+    let btnText = localize(`${moduleName}.messages.skillsmark.undo`);
+    message.updateSource({
         flags: {
             [moduleName]: {
                 rollbacks
             }
         },
-        content: message.content+`<br/><button type="button" data-action="rollback-skill-failure-state">${text}<i class="fa fa-undo" aria-hidden="true"></i></button>`
+        content: message.content
+            +`<div class="rollback-section"><br/><label>${text}</label><button type="button" data-action="rollback-skill-failure-state">${btnText} <i class="fa fa-undo" aria-hidden="true"></i></button></div>`
     })
 })

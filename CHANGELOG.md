@@ -1,3 +1,6 @@
+## Version 0.0.22
+- Rework redo undo btn
+
 ## Version 0.0.21
 - Added spanish (José Lozano)
 

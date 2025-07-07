@@ -324,13 +324,24 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
 
         toggleAllSkillFailures(rollbackFlag)
 
-        let text = btnWithAction.outerHTML?.includes("unmarked")
+
+        let unmarkedText = localize(`${moduleName}.messages.skillsmark.unmarked`);
+        let isUnmarked = btnWithAction.closest(".rollback-section").outerHTML?.includes(unmarkedText);
+        let text = isUnmarked
             ? localize(`${moduleName}.messages.skillsmark.marked`)
-            : localize(`${moduleName}.messages.skillsmark.unmarked`)
+            : unmarkedText
+
+        let btnText = localize(`${moduleName}.messages.skillsmark.${isUnmarked ? 'undo' : 'redo'}`);
 
         message.update({
             [`flags.${moduleName}.rollbacks`]: rollbackFlag,
-            content: message.content.replace(btnWithAction.outerHTML, `<button type="button" data-action="rollback-skill-failure-state">${text} <i class="fa fa-undo" aria-hidden="true"></i></button>`)
+            content: message.content
+                .replace(
+                    btnWithAction.closest(".rollback-section")?.querySelector('label').outerHTML,
+                    `<label>${text}</label>`)
+                .replace(
+                    btnWithAction.outerHTML,
+                    `<button type="button" data-action="rollback-skill-failure-state">${btnText} <i class="fa fa-undo" aria-hidden="true"></i></button>`)
         })
     }
 }

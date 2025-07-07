@@ -27,7 +27,9 @@
 	"messages": {
       "skillsmark": {
         "marked": "Estás aprendiendo de tus errores, la habilidad se ha marcado",
-        "unmarked": "Marca de habilidad quitada"
+        "unmarked": "Marca de habilidad quitada",
+        "undo": "Deshacer",
+        "redo": "Rehacer"
       },
       "damage": {
         "unconscious": "El agente {actorname} ha quedado inconsciente.",
