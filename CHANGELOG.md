@@ -1,3 +1,6 @@
+## Version 0.0.24
+- Change text of marked skill tooltip
+
 ## Version 0.0.23
 - Change text of marked skill btn
 
