@@ -124,8 +124,14 @@ span[data-post-inline]:hover {
 
 .rollback-section {
     order: 99;
-    display: inline-block;
+    display: flex;
     margin-top: 5px;
+    align-items: center;
+    justify-content: center;
+
+    > i {
+        margin: 5px;
+    }
 }
 
 [data-action="rollback-skill-failure-state"] {
