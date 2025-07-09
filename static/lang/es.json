@@ -27,7 +27,7 @@
     "messages": {
       "skillsmark": {
         "marked": "Esta habilidad está marcada",
-        "tooltip": "Ver página XX para más información"
+        "tooltip": "Consulte la página 29 del Manual del agente: Mejora de habilidades"
       },
       "damage": {
         "unconscious": "El agente {actorname} ha quedado inconsciente.",
