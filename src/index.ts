@@ -370,7 +370,7 @@ Hooks.on('preCreateChatMessage', (message: ChatMessage) => {
     })
 
     let text = localize(`${moduleName}.messages.skillsmark.marked`);
-    let btnText = localize(`${moduleName}.messages.skillsmark.undo`);
+    let tooltipText = localize(`${moduleName}.messages.skillsmark.tooltip`);
     message.updateSource({
         flags: {
             [moduleName]: {
@@ -378,6 +378,6 @@ Hooks.on('preCreateChatMessage', (message: ChatMessage) => {
             }
         },
         content: message.content
-            +`<div class="rollback-section"><br/><label>${text}</label><button type="button" data-action="rollback-skill-failure-state">${btnText} <i class="fa fa-undo" aria-hidden="true"></i></button></div>`
+            +`<div class="rollback-section"><label>${text}</label> <i class="fa fa-book" aria-hidden="true" data-tooltip="<p>${tooltipText}</p>"></i> <button type="button" data-action="rollback-skill-failure-state"><i class="fa fa-undo" aria-hidden="true"></i></button></div>`
     })
 })

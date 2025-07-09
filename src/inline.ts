@@ -1,5 +1,5 @@
 import {GlobalRolls, moduleName} from "./const.js";
-import {getCurrentActor, getCurrentSpeaker, localize, selectText} from "./utils.js";
+import {getCurrentActor, getCurrentSpeaker, selectText} from "./utils.js";
 
 export type InlineOptions = { success: string, failure: string, source?: string, secret?: boolean }
 
@@ -324,24 +324,16 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
 
         toggleAllSkillFailures(rollbackFlag)
 
-
-        let unmarkedText = localize(`${moduleName}.messages.skillsmark.unmarked`);
-        let isUnmarked = btnWithAction.closest(".rollback-section").outerHTML?.includes(unmarkedText);
-        let text = isUnmarked
-            ? localize(`${moduleName}.messages.skillsmark.marked`)
-            : unmarkedText
-
-        let btnText = localize(`${moduleName}.messages.skillsmark.${isUnmarked ? 'undo' : 'redo'}`);
+        let label = btnWithAction
+            .closest(".rollback-section")
+            ?.querySelector("label") as HTMLElement;
+        let oldHtml = label.outerHTML;
+        label.classList.toggle('strike');
 
         message.update({
             [`flags.${moduleName}.rollbacks`]: rollbackFlag,
             content: message.content
-                .replace(
-                    btnWithAction.closest(".rollback-section")?.querySelector('label').outerHTML,
-                    `<label>${text}</label>`)
-                .replace(
-                    btnWithAction.outerHTML,
-                    `<button type="button" data-action="rollback-skill-failure-state">${btnText} <i class="fa fa-undo" aria-hidden="true"></i></button>`)
+                .replace(oldHtml, label.outerHTML)
         })
     }
 }

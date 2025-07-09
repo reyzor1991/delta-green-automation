@@ -24,17 +24,15 @@
         "hint": "Activa la casilla de prueba de habilidad al fallar"
       }
     },
-	"messages": {
+    "messages": {
       "skillsmark": {
-        "marked": "Estás aprendiendo de tus errores, la habilidad se ha marcado",
-        "unmarked": "Marca de habilidad quitada",
-        "undo": "Deshacer",
-        "redo": "Rehacer"
+        "marked": "Esta habilidad está marcada",
+        "tooltip": "Ver página XX para más información"
       },
       "damage": {
         "unconscious": "El agente {actorname} ha quedado inconsciente.",
         "collapse": "El agente {actorname} ha sufrido un colapso emocional."
-      }	  
+      }
     }
   }
 }

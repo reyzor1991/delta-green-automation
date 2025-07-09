@@ -1,3 +1,6 @@
+## Version 0.0.23
+- Change text of marked skill btn
+
 ## Version 0.0.22
 - Rework redo undo btn
 

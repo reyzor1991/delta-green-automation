@@ -26,10 +26,8 @@
     },
     "messages": {
       "skillsmark": {
-        "marked": "You are learning from your mistakes, the checkbox was marked",
-        "unmarked": "The checkbox was unmarked",
-        "undo": "Undo",
-        "redo": "Redo"
+        "marked": "This skill is marked",
+        "tooltip": "See page XX for more information"
       },
       "damage": {
         "unconscious": "Agent {actorname} is unconscious.",
