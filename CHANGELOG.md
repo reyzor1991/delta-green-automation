@@ -1,3 +1,7 @@
+## Version 0.0.25
+- Small fix css
+- Small fix handling marked skill
+
 ## Version 0.0.24
 - Change text of marked skill tooltip
 

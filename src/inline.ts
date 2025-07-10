@@ -319,8 +319,8 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="strike">Loses were applied</label>')
         })
     } else if (action === 'rollback-skill-failure-state') {
-        let rollbackFlag = message.getFlag(moduleName, "rollbacks");
-        await actor.update(rollbackFlag);
+        let rollbackFlag = foundry.utils.deepClone(message.getFlag(moduleName, "rollbacks"));
+        await actor.update(foundry.utils.deepClone(rollbackFlag));
 
         toggleAllSkillFailures(rollbackFlag)
 
@@ -340,6 +340,9 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
 
 function toggleAllSkillFailures(data) {
     for (const skill of Object.values(data.system.skills)) {
+        skill.failure = !skill.failure;
+    }
+    for (const skill of Object.values(data.system?.typedSkills || {})) {
         skill.failure = !skill.failure;
     }
 }

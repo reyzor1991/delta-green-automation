@@ -343,7 +343,7 @@ Hooks.on('preCreateChatMessage', (message: ChatMessage) => {
         return;
     }
     let actor = message.speakerActor;
-    if (!game.user.isActiveGM || !message.isRoll || !actor) {
+    if (!message.isRoll || !actor) {
         return;
     }
     let roll = message.rolls[0]
