@@ -1,0 +1,13 @@
+{
+  "_id": "Vmmxgq74P8X0HT7y",
+  "author": "E9zWf1a6ounUt7Ro",
+  "command": "game.modules.get('delta-green-automation').macros['create-agent']()",
+  "img": "/icons/tools/hand/hammer-cobbler-steel.webp",
+  "name": "Agent Builder",
+  "ownership": {
+    "default": 1
+  },
+  "scope": "global",
+  "type": "script",
+  "_key": "!macros!Vmmxgq74P8X0HT7y"
+}

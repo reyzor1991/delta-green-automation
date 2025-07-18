@@ -339,7 +339,7 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
 }
 
 function toggleAllSkillFailures(data) {
-    for (const skill of Object.values(data.system.skills)) {
+    for (const skill of Object.values(data.system.skills || {})) {
         skill.failure = !skill.failure;
     }
     for (const skill of Object.values(data.system?.typedSkills || {})) {

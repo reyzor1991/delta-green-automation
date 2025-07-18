@@ -6,6 +6,7 @@ import {Settings} from "./settings.js";
 import {ActionDataModel, ActionsForm, ActionSheet} from "./action.js";
 import {EffectDataModel, EffectsForm, EffectSheet} from "./effect.js";
 import {applyRule, isValidRules, sum, VALID_RULES_TYPES} from "./rules.js";
+import {agentBuilder} from "./agent-build.js";
 
 Hooks.on("init", () => {
     Handlebars.registerHelper("json", (data: unknown): string => {
@@ -54,6 +55,15 @@ Hooks.on("init", () => {
     }
 
     Settings.init();
+
+    game.modules.get("delta-green-automation").macros = {
+        'create-agent': agentBuilder
+    }
+
+    foundry.applications.handlebars.loadTemplates([
+        "modules/delta-green-automation/templates/partials/agentBuilder-bio.hbs",
+        "modules/delta-green-automation/templates/partials/agentBuilder-profession.hbs",
+    ]);
 })
 
 function handleInlinePost(post: HTMLElement | null) {
@@ -378,6 +388,6 @@ Hooks.on('preCreateChatMessage', (message: ChatMessage) => {
             }
         },
         content: message.content
-            +`<div class="rollback-section"><label>${text}</label> <i class="fa fa-book" aria-hidden="true" data-tooltip="<p>${tooltipText}</p>"></i> <button type="button" data-action="rollback-skill-failure-state"><i class="fa fa-undo" aria-hidden="true"></i></button></div>`
+            + `<div class="rollback-section"><label>${text}</label> <i class="fa fa-book" aria-hidden="true" data-tooltip="<p>${tooltipText}</p>"></i> <button type="button" data-action="rollback-skill-failure-state"><i class="fa fa-undo" aria-hidden="true"></i></button></div>`
     })
 })

@@ -1,3 +1,7 @@
+## Version 0.0.26
+- Add macro for Character builder 
+- STEP 1: Selecting profession with basic skills
+
 ## Version 0.0.25
 - Small fix css
 - Small fix handling marked skill

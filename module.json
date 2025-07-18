@@ -2,7 +2,7 @@
   "id": "delta-green-automation",
   "title": "Delta Green Automation",
   "description": "",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "license": "./LICENSE",
   "authors": [
     {
@@ -17,7 +17,7 @@
       "name": "English",
       "path": "lang/en.json"
     },
-	{
+    {
       "lang": "es",
       "name": "Español",
       "path": "lang/es.json"

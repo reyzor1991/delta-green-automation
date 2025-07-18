@@ -1,0 +1,25 @@
+<div class="basic-form">
+    <div class="step-form">
+        {{#if_eq currentStep 'setBio'}}
+            {{> "modules/delta-green-automation/templates/partials/agentBuilder-bio.hbs" actorData=../actorData }}
+        {{/if_eq}}
+
+        {{#if_eq currentStep 'selectProfession'}}
+            {{> "modules/delta-green-automation/templates/partials/agentBuilder-profession.hbs" actorData=../actorData professions=../professions}}
+        {{/if_eq}}
+    </div>
+    <div class="bottom-buttons">
+        {{#if hasPrevious}}
+            <button class="submit" data-button="previousStep">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back
+            </button>
+        {{/if}}
+        {{#if hasNext}}
+            <button class="submit" data-button="nextStep">
+                <i class="fa-solid fa-arrow-right"></i>
+                {{#if isFinish}}Finish{{else}}Next{{/if}}
+            </button>
+        {{/if}}
+    </div>
+</div>
