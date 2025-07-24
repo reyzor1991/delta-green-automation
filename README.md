@@ -11,3 +11,9 @@
 - - @Skill[key:accounting]{Calculate debit}
 - - @Skill[key:accounting,secret:true]{Calculate debit (Secret)}
 - - @Skill[key:key-of-skill]{label}
+
+
+- Added btn for fast posting from journal pages
+![journal_inline_example_raw.png](assets/journal_inline_example_raw.png)
+![journal_inline_example.png](assets/journal_inline_example.png)
+![inline_in_chat.png](assets/inline_in_chat.png)

@@ -1,3 +1,7 @@
+## Version 0.0.27
+- Fix applying adaptation
+- Update Sanity Roll macro - need to reimport
+
 ## Version 0.0.26
 - Add macro for Character builder 
 - STEP 1: Selecting profession with basic skills

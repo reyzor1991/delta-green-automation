@@ -171,3 +171,12 @@ span[data-post-inline]:hover {
          justify-content: flex-end;
      }
 }
+
+.sanity-macro {
+    form {
+        height: 100%;
+    }
+    .standard-form {
+        flex: 1;
+    }
+}

@@ -218,7 +218,7 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
         dataForUpdate["system.sanity.value"] = newSanityValue;
         rollbacks["system.sanity.value"] = actor.system.sanity.value;
 
-        if (source && !isSuccessRoll) {
+        if (source && applySanDamage > 0) {
             let targetSource = undefined
             if (source === "violence") {
                 if (!actor.system.sanity.adaptations.violence.incident1) {
