@@ -13,6 +13,10 @@
         "automation": {
           "name": "Automation Settings Menu",
           "label": "Open menu"
+        },
+        "calendar": {
+          "name": "Calendar Settings Menu",
+          "label": "Open menu"
         }
       },
       "dyingStatusEffect": {
@@ -22,6 +26,16 @@
       "failureSkills": {
         "name": "Auto adding failure state to skill",
         "hint": ""
+      },
+      "calendarFormatStyle": {
+        "name": "Choose type of date format",
+        "hint": "",
+        "us": "Use en-US format",
+        "eu": "Use en-GB format"
+      },
+      "currentTimeZone": {
+        "name": "current time zone",
+        "hint": "by default 0"
       }
     },
     "messages": {

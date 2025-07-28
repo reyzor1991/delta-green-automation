@@ -1,5 +1,6 @@
 import {moduleName} from "./const.js";
 import {localize} from "./utils.js";
+import {rerenderTime} from "./index.js";
 
 abstract class SubSettings extends FormApplication {
 
@@ -92,6 +93,38 @@ class AutomationSettings extends SubSettings {
 }
 
 
+class CalendarSettings extends SubSettings {
+
+    static _namespace = "calendar";
+
+    static get settings() {
+        return {
+            calendarFormatStyle: {
+                name: `${moduleName}.SETTINGS.calendarFormatStyle.name`,
+                hint: `${moduleName}.SETTINGS.calendarFormatStyle.hint`,
+                type: String,
+                choices: {
+                    "en-US": game.i18n.localize(`${moduleName}.SETTINGS.calendarFormatStyle.us`),
+                    "en-GB": game.i18n.localize(`${moduleName}.SETTINGS.calendarFormatStyle.eu`),
+                },
+                default: "en-GB",
+                onChange: (_value: any) => {
+                    rerenderTime(ui.players.element)
+                },
+            },
+            currentTimeZone: {
+                name: `${moduleName}.SETTINGS.currentTimeZone.name`,
+                hint: `${moduleName}.SETTINGS.currentTimeZone.hint`,
+                type: Number,
+                default: 0,
+                onChange: (_value: any) => {
+                    rerenderTime(ui.players.element)
+                },
+            }
+        };
+    }
+}
+
 export class Settings {
 
     static get(name: string) {
@@ -109,5 +142,15 @@ export class Settings {
             restricted: true
         });
         AutomationSettings.init();
+
+        game.settings.registerMenu(moduleName, "calendar", {
+            name: localize(`${moduleName}.SETTINGS.Menu.calendar.name`),
+            label: localize(`${moduleName}.SETTINGS.Menu.calendar.label`),
+            hint: "",
+            icon: "fa-solid fa-clock",
+            type: CalendarSettings,
+            restricted: true
+        });
+        CalendarSettings.init();
     }
 }

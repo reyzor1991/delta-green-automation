@@ -1,3 +1,7 @@
+## Version 0.0.28
+- Add small calendar info 
+- Settings for dateformat and timezone
+
 ## Version 0.0.27
 - Fix applying adaptation
 - Update Sanity Roll macro - need to reimport

@@ -391,3 +391,45 @@ Hooks.on('preCreateChatMessage', (message: ChatMessage) => {
             + `<div class="rollback-section"><label>${text}</label> <i class="fa fa-book" aria-hidden="true" data-tooltip="<p>${tooltipText}</p>"></i> <button type="button" data-action="rollback-skill-failure-state"><i class="fa fa-undo" aria-hidden="true"></i></button></div>`
     })
 })
+
+function getEtcTimeZone(offset: number): string {
+    const sign = offset >= 0 ? "-" : "+";
+    return `Etc/GMT${sign}${Math.abs(offset)}`;
+}
+
+Hooks.on("renderPlayers", (_app: object, html: HTMLElement, _playes: object, _options: any) => {
+    rerenderTime(html)
+})
+
+Hooks.on('updateWorldTime', () => {
+    rerenderTime(ui.players.element)
+})
+
+export function rerenderTime(html: HTMLElement) {
+    const timeZone = getEtcTimeZone(Settings.get("currentTimeZone"));
+
+    const date = new Date(game.time.worldTime * 1000); // assuming epoch in seconds
+    const formattedDate = date.toLocaleString(Settings.get("calendarFormatStyle"), {
+        timeZone,
+        hour12: false,
+        timeZoneName: "short",
+        year: "numeric",
+        month: "long",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    const existing = html.querySelector(".calendar-current-time");
+    const content = `Current Date:<br/>${formattedDate}`;
+
+    if (existing) {
+        existing.innerHTML = content;
+    } else {
+        const newEl = foundry.utils.parseHTML(
+            `<div class="calendar-current-time" style="margin-top: 10px;">${content}</div>`
+        );
+        html.appendChild(newEl);
+    }
+}
