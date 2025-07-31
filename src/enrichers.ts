@@ -69,7 +69,7 @@ export async function enrichSkillString(
     if (data.length < 4) {
         return null;
     }
-    const [_match, _skillType, rollParams, label] = data;
+    const [_match, skillType, rollParams, label] = data;
 
     const resultMap = new Map(
         rollParams.split(',').map(pair => {
@@ -88,7 +88,7 @@ export async function enrichSkillString(
     a.classList.add("inline-roll");
     a.appendChild(icon);
     a.appendChild(htmlLabel);
-    a.dataset['checkType'] = 'skill-roll';
+    a.dataset['checkType'] = skillType === "Statistic" ? 'stat-roll' : 'skill-roll';
     a.dataset['key'] = resultMap.get("key");
 
     resultMap.forEach((value, key) => {

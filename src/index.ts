@@ -1,4 +1,4 @@
-import {enrichSanityString, enrichSkillString} from "./enrichers.js";
+import {enrichSanityString, enrichSkillString, enrichStatisticString} from "./enrichers.js";
 import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions, InlineOptions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
 import {applyDamage, currentTargets, getCurrentActor, htmlClosest, localize, localizeFormat} from "./utils.js";
@@ -19,7 +19,7 @@ Hooks.on("init", () => {
         enricher: (match, options) => enrichSanityString(match, options),
     });
     CONFIG.TextEditor.enrichers.push({
-        pattern: /@(Skill)\[([^\]]+)\](?:{([^}]+)})?/g,
+        pattern: /@(Skill|Statistic)\[([^\]]+)\](?:{([^}]+)})?/g,
         enricher: (match, options) => enrichSkillString(match, options),
     });
 
@@ -40,11 +40,12 @@ Hooks.on("init", () => {
             let type = a.dataset.checkType;
             if (type === "sanity-roll") {
                 clickInlineSanityRoll(event, a.dataset as InlineOptions);
-            } else if (type === "skill-roll") {
+            } else if (type === "skill-roll" || type === "stat-roll") {
                 clickInlineSkillRoll(event, {
                     key: a.dataset?.key,
                     secret: a.dataset?.secret,
-                    specialTrainingName: a.dataset?.specialTrainingName
+                    specialTrainingName: a.dataset?.specialTrainingName,
+                    rollType: type === "skill-roll" ? "skill" : "stat",
                 });
             } else {
                 console.log(`unknown inline roll type: ${type}`);
@@ -406,6 +407,14 @@ Hooks.on('updateWorldTime', () => {
 })
 
 export function rerenderTime(html: HTMLElement) {
+    if (!Settings.get("showCalendar")) {
+        const existing = html.querySelector(".calendar-current-time");
+        if (existing) {
+            existing.remove();
+        }
+        return;
+    }
+
     const timeZone = getEtcTimeZone(Settings.get("currentTimeZone"));
 
     const date = new Date(game.time.worldTime * 1000); // assuming epoch in seconds

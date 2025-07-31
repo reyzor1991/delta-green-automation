@@ -36,6 +36,10 @@
       "currentTimeZone": {
         "name": "current time zone",
         "hint": "by default 0"
+      },
+      "showCalendar": {
+        "name": "Show calendar",
+        "hint": ""
       }
     },
     "messages": {

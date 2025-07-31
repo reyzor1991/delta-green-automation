@@ -11,6 +11,8 @@
 - - @Skill[key:accounting]{Calculate debit}
 - - @Skill[key:accounting,secret:true]{Calculate debit (Secret)}
 - - @Skill[key:key-of-skill]{label}
+- Statistics
+- - @Statistic[key:str]{Check you Strength}
 
 
 - Added btn for fast posting from journal pages

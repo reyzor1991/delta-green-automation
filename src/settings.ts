@@ -99,6 +99,15 @@ class CalendarSettings extends SubSettings {
 
     static get settings() {
         return {
+            showCalendar: {
+                name: `${moduleName}.SETTINGS.showCalendar.name`,
+                hint: `${moduleName}.SETTINGS.showCalendar.hint`,
+                default: false,
+                type: Boolean,
+                onChange: (_value: any) => {
+                    rerenderTime(ui.players.element)
+                },
+            },
             calendarFormatStyle: {
                 name: `${moduleName}.SETTINGS.calendarFormatStyle.name`,
                 hint: `${moduleName}.SETTINGS.calendarFormatStyle.hint`,

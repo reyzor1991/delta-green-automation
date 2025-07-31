@@ -1,3 +1,7 @@
+## Version 0.0.29
+- Show calendar (setting)
+- Inline stat roll
+
 ## Version 0.0.28
 - Add small calendar info 
 - Settings for dateformat and timezone

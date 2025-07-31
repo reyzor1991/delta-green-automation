@@ -18,14 +18,14 @@ async function processPercentileRoll(event: MouseEvent, rollOptions: {}) {
     return roll;
 }
 
-export async function clickInlineSkillRoll(event: MouseEvent, options: { key: string, specialTrainingName?: string, secret?: string }) {
+export async function clickInlineSkillRoll(event: MouseEvent, options: { key: string, specialTrainingName?: string, secret?: string, rollType?: string }) {
     let actor = getCurrentActor();
     if (!actor) {
         return;
     }
 
     const rollOptions = {
-        rollType: "skill",
+        rollType: options.rollType || "skill",
         actor,
         key: options.key,
         specialTrainingName: options.specialTrainingName
