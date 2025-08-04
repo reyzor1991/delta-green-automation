@@ -1,4 +1,4 @@
-import {moduleName} from "./const.js";
+import {moduleName, TIME_ZONES} from "./const.js";
 import {localize} from "./utils.js";
 import {rerenderTime} from "./index.js";
 
@@ -124,8 +124,9 @@ class CalendarSettings extends SubSettings {
             currentTimeZone: {
                 name: `${moduleName}.SETTINGS.currentTimeZone.name`,
                 hint: `${moduleName}.SETTINGS.currentTimeZone.hint`,
-                type: Number,
-                default: 0,
+                type: String,
+                default: 'utc',
+                choices: TIME_ZONES,
                 onChange: (_value: any) => {
                     rerenderTime(ui.players.element)
                 },

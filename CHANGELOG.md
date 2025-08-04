@@ -1,3 +1,8 @@
+## Version 0.0.30
+- Small fixed for calendar
+- Change logic of time zones (Use readable values)
+- add btns for second/minute/hour/day/month , set value
+
 ## Version 0.0.29
 - Show calendar (setting)
 - Inline stat roll
