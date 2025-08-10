@@ -1,3 +1,7 @@
+## Version 0.0.31
+- Delete calendar from this module
+- Migrate to Earth Calendar
+
 ## Version 0.0.30
 - Small fixed for calendar
 - Change logic of time zones (Use readable values)

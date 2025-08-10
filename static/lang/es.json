@@ -13,10 +13,6 @@
         "automation": {
           "name": "Menú de automatizaciones",
           "label": "Abrir menú"
-        },
-        "calendar": {
-          "name": "Menú de configuración del calendario",
-          "label": "Abrir menú"
         }
       },
       "dyingStatusEffect": {
@@ -25,20 +21,6 @@
       },
       "failureSkills": {
         "name": "Añadir marca de habilidad fallada",
-        "hint": ""
-      },
-      "calendarFormatStyle": {
-        "name": "Elija el tipo de formato de fecha",
-        "hint": "",
-        "us": "Utilice el formato en-US",
-        "eu": "Utilice el formato"
-      },
-      "currentTimeZone": {
-        "name": "zona horaria actual",
-        "hint": "por defecto 0"
-      },
-      "showCalendar": {
-        "name": "Mostrar calendario",
         "hint": ""
       }
     },
