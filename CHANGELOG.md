@@ -1,3 +1,6 @@
+## Version 0.0.32
+- failure skills only for agents
+
 ## Version 0.0.31
 - Delete calendar from this module
 - Migrate to Earth Calendar

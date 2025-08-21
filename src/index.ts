@@ -354,7 +354,7 @@ Hooks.on('preCreateChatMessage', (message: ChatMessage) => {
         return;
     }
     let actor = message.speakerActor;
-    if (!message.isRoll || !actor) {
+    if (!message.isRoll || !actor || actor?.type != "agent") {
         return;
     }
     let roll = message.rolls[0]
