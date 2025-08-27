@@ -1,3 +1,6 @@
+## Version 0.0.33
+- Add check adaptation for failure SAN rolls
+
 ## Version 0.0.32
 - failure skills only for agents
 

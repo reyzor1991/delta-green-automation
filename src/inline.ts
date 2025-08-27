@@ -18,7 +18,12 @@ async function processPercentileRoll(event: MouseEvent, rollOptions: {}) {
     return roll;
 }
 
-export async function clickInlineSkillRoll(event: MouseEvent, options: { key: string, specialTrainingName?: string, secret?: string, rollType?: string }) {
+export async function clickInlineSkillRoll(event: MouseEvent, options: {
+    key: string,
+    specialTrainingName?: string,
+    secret?: string,
+    rollType?: string
+}) {
     let actor = getCurrentActor();
     if (!actor) {
         return;
@@ -53,6 +58,13 @@ export async function clickInlineSanityRoll(event: MouseEvent, options: InlineOp
         rollOptions.rollMode = "blindroll";
     }
     let roll = await processPercentileRoll(event, rollOptions);
+
+    if (options?.source) {
+        const adapted = foundry.utils.getProperty(actor, `system.sanity.adaptations.${options.source}.isAdapted`);
+        if (adapted) {
+            return;
+        }
+    }
 
     handleSanityResult(speaker, roll, options);
 }
