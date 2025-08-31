@@ -1,0 +1,13 @@
+{
+  "_id": "uliBgkPCUQRwRgo3",
+  "author": "E9zWf1a6ounUt7Ro",
+  "command": "function createBtn(label, success, failure, source) { if (source && source === 'no') { source = '' } else { source = `,source:${source}` } let content = `@Sanity[success:${success},failure:${failure}${source}]`; if (label) { content += `{${label}}` } ChatMessage.create({'content': content}) } foundry.applications.api.DialogV2.wait({ classes: [\"sanity-macro\"], position: {width: 500, height: 500}, window: 'Sanity Roll Setup', content: `<label>Label</label><input type=\"text\" name=\"label\"/><label for=\"source\">Source:</label><select size=\"3\" style=\"height:100%\" id=\"source\" name=\"source\"> <option value=\"no\">no</option> <option value=\"violence\">Violence</option> <option value=\"helplessness\">Helplessness</option> <option value=\"unnatural\">Unnatural</option> </select>`, buttons: [ { action: \"0_1\", label: \"0/1\", callback: (event, htmlBtn) => { let form = htmlBtn.closest('.dialog-form'); createBtn( form.querySelector('input[name=\"label\"]').value, \"0\", \"1\", form.querySelector('[name=\"source\"]').value ) } }, { action: \"0_1d4\", label: \"0/1d4\", callback: (event, htmlBtn) => { let form = htmlBtn.closest('.dialog-form'); createBtn( form.querySelector('input[name=\"label\"]').value, \"0\", \"1d4\", form.querySelector('[name=\"source\"]').value ) } }, { action: \"0_1d6\", label: \"0/1d6\", callback: (event, htmlBtn) => { let form = htmlBtn.closest('.dialog-form'); createBtn( form.querySelector('input[name=\"label\"]').value, \"0\", \"1d6\", form.querySelector('[name=\"source\"]').value ) } }, { action: \"1_1d6\", label: \"1/1d6\", callback: (event, htmlBtn) => { let form = htmlBtn.closest('.dialog-form'); createBtn( form.querySelector('input[name=\"label\"]').value, \"1\", \"1d6\", form.querySelector('[name=\"source\"]').value ) } }, { action: \"0_1d8\", label: \"0/1d8\", callback: (event, htmlBtn) => { let form = htmlBtn.closest('.dialog-form'); createBtn( form.querySelector('input[name=\"label\"]').value, \"0\", \"1d8\", form.querySelector('[name=\"source\"]').value ) } }, { action: \"1_1d8\", label: \"1/1d8\", callback: (event, htmlBtn) => { let form = htmlBtn.closest('.dialog-form'); createBtn( form.querySelector('input[name=\"label\"]').value, \"1\", \"1d8\", form.querySelector('[name=\"source\"]').value ) } } ], });",
+  "img": "/icons/magic/control/fear-fright-white.webp",
+  "name": "Fast Sanity Roll",
+  "ownership": {
+    "default": 1
+  },
+  "scope": "global",
+  "type": "script",
+  "_key": "!macros!uliBgkPCUQRwRgo3"
+}

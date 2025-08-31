@@ -1,3 +1,6 @@
+## Version 0.0.34
+- Add Fast Sanity Roll macro
+
 ## Version 0.0.33
 - Add check adaptation for failure SAN rolls
 
