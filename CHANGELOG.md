@@ -1,3 +1,6 @@
+## Version 0.0.35
+- Delete failure skill logic, now it's part of system
+
 ## Version 0.0.34
 - Add Fast Sanity Roll macro
 

@@ -330,23 +330,6 @@ export async function handleInlineActions(btnWithAction: HTMLElement, messageId:
             [`flags.${moduleName}.-=rollbackBonds`]: null,
             flavor: message.flavor.replace(btnWithAction.outerHTML, '<label class="strike">Loses were applied</label>')
         })
-    } else if (action === 'rollback-skill-failure-state') {
-        let rollbackFlag = foundry.utils.deepClone(message.getFlag(moduleName, "rollbacks"));
-        await actor.update(foundry.utils.deepClone(rollbackFlag));
-
-        toggleAllSkillFailures(rollbackFlag)
-
-        let label = btnWithAction
-            .closest(".rollback-section")
-            ?.querySelector("label") as HTMLElement;
-        let oldHtml = label.outerHTML;
-        label.classList.toggle('strike');
-
-        message.update({
-            [`flags.${moduleName}.rollbacks`]: rollbackFlag,
-            content: message.content
-                .replace(oldHtml, label.outerHTML)
-        })
     }
 }
 
