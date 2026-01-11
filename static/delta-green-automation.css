@@ -167,16 +167,53 @@ span[data-post-inline]:hover {
         justify-content: space-between;
         padding: 1rem;
     }
+
     .bottom-buttons:has(> button:only-child) {
-         justify-content: flex-end;
-     }
+        justify-content: flex-end;
+    }
 }
 
 .sanity-macro {
     form {
         height: 100%;
     }
+
     .standard-form {
         flex: 1;
+    }
+}
+
+.corruption-first-line {
+    display: inline-grid;
+    grid-template-columns: auto auto auto 60px;
+    width: 100%;
+    align-items: center;
+}
+
+.list-area.corruptions {
+
+    padding: 0;
+
+    li {
+        display: flex;
+        gap: 20px;
+        padding: 5px;
+
+        .name {
+            max-width: 90px;
+        }
+    }
+
+    img {
+        width: 60px;
+        height: 60px;
+    }
+
+    li {
+        border-bottom: 1px solid yellow;
+    }
+
+    li:last-child {
+        border-bottom: none;
     }
 }

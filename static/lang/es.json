@@ -24,6 +24,7 @@
         "hint": ""
       }
     },
+    "showCorruption": "Mostrar la corrupción de los agentes",
     "messages": {
       "skillsmark": {
         "marked": "Esta habilidad está marcada",

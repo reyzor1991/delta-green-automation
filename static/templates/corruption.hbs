@@ -1,0 +1,46 @@
+<div style="overflow-y:auto">
+    <ul class="list-area corruptions">
+        {{#each corruptions as |data|}}
+            <li style="" data-uuid="{{data.uuid}}">
+                <div class="name">
+                    <h4>{{data.name}}</h4>
+                    <img class="item-img" src="{{data.img}}" data-edit="img" title="{{data.name}}"/>
+                </div>
+                <div class="yellow-king">
+                    <div class="corruption-first-line">
+                        <span class="">{{localize 'DG.ImpossibleLanscapes.IHaveSeenThe'}} {{localize
+                                'DG.ImpossibleLanscapes.YellowSign'}}</span>
+                        <input
+                                class="corruption-field have-seen-yellow-sign"
+                                type="checkbox"
+                                data-path="system.corruption.haveSeenTheYellowSign"
+                            {{checked data.corruption.haveSeenTheYellowSign}}
+                        />
+                        <span class="">{{localize 'DG.ImpossibleLanscapes.CorruptionFirstHalf'}}{{localize
+                                'DG.ImpossibleLanscapes.CorruptionSecondHalf'}}</span>
+                        <input
+                                class="corruption-field"
+                                type="number"
+                                data-path="system.corruption.value"
+                                value="{{data.corruption.value}}"
+                        />
+                    </div>
+                    <span class="">{{localize 'DG.ImpossibleLanscapes.Gift'}}</span>
+                    <input
+                            class="corruption-field"
+                            type="text"
+                            data-path="system.corruption.gift"
+                            value="{{data.corruption.gift}}"
+                    />
+                    <span class="">{{localize 'DG.ImpossibleLanscapes.Insight'}}</span>
+                    <input
+                            class="corruption-field"
+                            type="text"
+                            data-path="system.corruption.insight"
+                            value="{{data.corruption.insight}}"
+                    />
+                </div>
+            </li>
+        {{/each}}
+    </ul>
+</div>

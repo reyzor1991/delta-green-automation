@@ -1,5 +1,6 @@
 import {moduleName} from "./const.js";
 import {localize} from "./utils.js";
+import {sum} from "./rules.js";
 
 export function agentBuilder(): void {
     (new AgentBuilderForm()).render(true)
@@ -133,7 +134,7 @@ class AgentBuilderForm extends foundry.applications.api.HandlebarsApplicationMix
         this.hasPrevious = false;
         this.isFinish = false;
         this.actorData = {};
-        this.allSteps = ['setBio', 'selectProfession'];
+        this.allSteps = ['setBio', 'setStat', 'selectProfession'];
     }
 
     static DEFAULT_OPTIONS = {
@@ -191,6 +192,12 @@ class AgentBuilderForm extends foundry.applications.api.HandlebarsApplicationMix
         if (this.currentStep === 'setBio') {
             if (!this.actorData?.name) {
                 ui.notifications.warn("Need to set name of actor")
+                return false;
+            }
+        } else if (this.currentStep === 'setStat') {
+            let values = Object.values(this.actorData?.statistics || {}) as number[];
+            if (sum(values) !== 72) {
+                ui.notifications.warn("Need to set 72 points to statistics")
                 return false;
             }
         } else if (this.currentStep === 'selectProfession') {
@@ -263,6 +270,9 @@ class AgentBuilderForm extends foundry.applications.api.HandlebarsApplicationMix
                     name: form.actorData.name,
                     ...form.actorData.skills,
                     "system.biography.profession": form.PROFESSIONS.find(p => p.value === form.actorData.profession)?.label,
+                    "system.statistics": Object.fromEntries(
+                        Object.entries(form.actorData.statistics).map(([key, value]) => [key, { value }])
+                    )
                 })
 
                 form.close()

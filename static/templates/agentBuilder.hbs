@@ -4,6 +4,10 @@
             {{> "modules/delta-green-automation/templates/partials/agentBuilder-bio.hbs" actorData=../actorData }}
         {{/if_eq}}
 
+        {{#if_eq currentStep 'setStat'}}
+            {{> "modules/delta-green-automation/templates/partials/agentBuilder-stat.hbs" actorData=../actorData}}
+        {{/if_eq}}
+
         {{#if_eq currentStep 'selectProfession'}}
             {{> "modules/delta-green-automation/templates/partials/agentBuilder-profession.hbs" actorData=../actorData professions=../professions}}
         {{/if_eq}}

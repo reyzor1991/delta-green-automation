@@ -1,3 +1,6 @@
+## Version 0.0.36
+- Add corruption form to toolbar
+
 ## Version 0.0.35
 - Delete failure skill logic, now it's part of system
 

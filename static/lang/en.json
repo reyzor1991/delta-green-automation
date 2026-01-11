@@ -24,6 +24,7 @@
         "hint": ""
       }
     },
+    "showCorruption": "Show agents corruption",
     "messages": {
       "skillsmark": {
         "marked": "This skill is marked",

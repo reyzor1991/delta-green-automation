@@ -1,7 +1,7 @@
 import {enrichSanityString, enrichSkillString} from "./enrichers.js";
 import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions, InlineOptions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
-import {applyDamage, currentTargets, getCurrentActor, htmlClosest, localize, localizeFormat} from "./utils.js";
+import {applyDamage, currentTargets, getCurrentActor, htmlClosest, localizeFormat} from "./utils.js";
 import {Settings} from "./settings.js";
 import {ActionDataModel, ActionsForm, ActionSheet} from "./action.js";
 import {EffectDataModel, EffectsForm, EffectSheet} from "./effect.js";
@@ -63,6 +63,7 @@ Hooks.on("init", () => {
 
     foundry.applications.handlebars.loadTemplates([
         "modules/delta-green-automation/templates/partials/agentBuilder-bio.hbs",
+        "modules/delta-green-automation/templates/partials/agentBuilder-stat.hbs",
         "modules/delta-green-automation/templates/partials/agentBuilder-profession.hbs",
     ]);
 })
@@ -347,4 +348,96 @@ Hooks.on('getActorSheetHeaderButtons', async (sheet: object, buttons: object[]) 
             new ActionsForm({actor: sheet.object}).render(true);
         },
     });
+});
+
+
+class CorruptionForm extends foundry.applications.api.HandlebarsApplicationMixin(
+    foundry.applications.api.ApplicationV2,
+) {
+    static DEFAULT_OPTIONS = {
+        id: `${moduleName}-corruption-form`,
+        classes: [moduleName],
+        window: {title: "Corruption", resizable: true},
+        position: {width: 700, height: 500},
+        actions: {},
+        form: {
+            submitOnChange: true,
+            closeOnSubmit: false
+        },
+    };
+
+    static PARTS = {
+        hbs: {
+            template: `modules/${moduleName}/templates/corruption.hbs`
+        }
+    };
+
+    async _prepareContext(_options: {}) {
+        let context = await super._prepareContext(_options);
+
+        return {
+            corruptions: game.actors.filter(a => a.type == 'agent')
+                .map(a => {
+                    return {
+                        uuid: a.uuid,
+                        name: a.name,
+                        img: a.img,
+                        corruption: a?.system?.corruption
+                    }
+                })
+                .filter(a => a),
+            ...context,
+        };
+    }
+
+    _attachPartListeners(partId: string, htmlElement: HTMLElement, options: object) {
+        htmlElement.addEventListener("change", async (e: Event) => {
+            const target = e.target as HTMLInputElement;
+
+            if (!target.matches(".corruption-field")) return;
+
+            const li = target.closest("li[data-uuid]") as HTMLElement | null;
+            if (!li) return;
+
+            const uuid = li.dataset.uuid!;
+            const path = target.dataset.path;
+            if (!path) return;
+
+            let value: any;
+
+            switch (target.type) {
+                case "checkbox":
+                    value = target.checked;
+                    break;
+                case "number":
+                    value = Number(target.value) || 0;
+                    break;
+                default:
+                    value = target.value;
+            }
+
+            const actor = await fromUuid(uuid);
+            if (!actor) return;
+
+            await actor.update({
+                [path]: value
+            });
+        });
+    }
+}
+
+Hooks.on('getSceneControlButtons', function addControl(sceneControls) {
+    if (!game.user.isGM) {
+        return;
+    }
+
+    sceneControls.tokens.tools.showCorruption = {
+        name: 'showCorruption',
+        title: `${moduleName}.showCorruption`,
+        icon: 'fas fa-skull',
+        button: true,
+        onChange: () => {
+            (new CorruptionForm()).render(true)
+        },
+    };
 });
