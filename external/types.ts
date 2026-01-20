@@ -262,7 +262,14 @@ declare global {
         badge: { [key: string]: string } & { value: number };
     }
 
+    class Folder {
+        id: string;
+        name: string;
+    }
+
     class Actor extends FoundryObject {
+
+        folder: Folder;
 
         isOfType(type: string): boolean;
 

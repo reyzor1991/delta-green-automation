@@ -1,3 +1,6 @@
+## Version 0.0.37
+- Add folder filter for corruption form
+
 ## Version 0.0.36
 - Add corruption form to toolbar
 

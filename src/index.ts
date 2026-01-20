@@ -350,10 +350,11 @@ Hooks.on('getActorSheetHeaderButtons', async (sheet: object, buttons: object[]) 
     });
 });
 
-
 class CorruptionForm extends foundry.applications.api.HandlebarsApplicationMixin(
     foundry.applications.api.ApplicationV2,
 ) {
+    activeForder = "all";
+
     static DEFAULT_OPTIONS = {
         id: `${moduleName}-corruption-form`,
         classes: [moduleName],
@@ -367,7 +368,10 @@ class CorruptionForm extends foundry.applications.api.HandlebarsApplicationMixin
     };
 
     static PARTS = {
-        hbs: {
+        corruption_search: {
+            template: `modules/${moduleName}/templates/corruption_search.hbs`
+        },
+        corruptions: {
             template: `modules/${moduleName}/templates/corruption.hbs`
         }
     };
@@ -375,8 +379,32 @@ class CorruptionForm extends foundry.applications.api.HandlebarsApplicationMixin
     async _prepareContext(_options: {}) {
         let context = await super._prepareContext(_options);
 
+        let actors = game.actors.filter(a => a.type == 'agent');
+        const folders = [
+            ...new Map(
+                actors
+                    .map(a => a.folder)
+                    .filter(f => f)
+                    .map(f => [f.id, {id: f.id, name: f.name}])
+            ).values()
+        ];
+        folders.unshift({
+            id: "all",
+            name: "--All folders--",
+        })
+
         return {
-            corruptions: game.actors.filter(a => a.type == 'agent')
+            ...context,
+            activeFolder: this.activeForder,
+            folders,
+            corruptions: actors
+                .filter(a => {
+                    if (this.activeForder !== "all") {
+                        return a?.folder?.id === this.activeForder;
+                    } else {
+                        return true;
+                    }
+                })
                 .map(a => {
                     return {
                         uuid: a.uuid,
@@ -386,11 +414,30 @@ class CorruptionForm extends foundry.applications.api.HandlebarsApplicationMixin
                     }
                 })
                 .filter(a => a),
-            ...context,
         };
     }
 
     _attachPartListeners(partId: string, htmlElement: HTMLElement, options: object) {
+        if (partId == "corruptions") {
+            this._attachCorruptionsListeners(htmlElement, options);
+        } else if (partId == "corruption_search") {
+            this._attachCorruptionSearchListeners(htmlElement, options);
+        }
+    }
+
+
+    _attachCorruptionSearchListeners(htmlElement: HTMLElement, options: object) {
+        const folderSelect = htmlElement.querySelector('#corruption-folder-select');
+
+        folderSelect?.addEventListener('change', (event) => {
+            const selectedOption = event.target?.selectedOptions[0];
+            this.activeForder = selectedOption?.dataset?.folderId;
+
+            this.render(true);
+        });
+    }
+
+    _attachCorruptionsListeners(htmlElement: HTMLElement, options: object) {
         htmlElement.addEventListener("change", async (e: Event) => {
             const target = e.target as HTMLInputElement;
 

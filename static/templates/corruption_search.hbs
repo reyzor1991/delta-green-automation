@@ -1,0 +1,10 @@
+<div class="">
+    <div class="">
+        <label for="corruption-folder-select">Folder</label>
+        <select id="corruption-folder-select">
+            {{#each folders as |folder|}}
+                <option data-folder-id="{{folder.id}}" {{#if (eq folder.id ../activeFolder)}}selected{{/if}}>{{folder.name}}</option>
+            {{/each}}
+        </select>
+    </div>
+</div>
