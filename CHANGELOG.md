@@ -1,3 +1,6 @@
+## Version 0.0.38
+- Corruption form btn - show only when Show Impossible Landscapes Content is on
+
 ## Version 0.0.37
 - Add folder filter for corruption form
 

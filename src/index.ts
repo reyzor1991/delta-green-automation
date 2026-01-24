@@ -477,6 +477,9 @@ Hooks.on('getSceneControlButtons', function addControl(sceneControls) {
     if (!game.user.isGM) {
         return;
     }
+    if (!game.settings.get("deltagreen", "showImpossibleLandscapesContent")) {
+        return;
+    }
 
     sceneControls.tokens.tools.showCorruption = {
         name: 'showCorruption',
