@@ -23,13 +23,27 @@ export function currentTargets() {
         }, {} as { [key: string]: object });
 }
 
-export function applyDamage(token: Token, damageAmount: number, multiplier: number = 1) {
+export type DamageData = { damageAmount: number, armorPiercing: number }
+
+export function applyDamage(token: Token, damageData: DamageData, multiplier: number = 1) {
     let protection = token?.actor?.system?.health?.protection || 0;
-    let damageAfterProtection = Math.max(damageAmount - protection, 0)
+    const scaledDamage = damageData.damageAmount * multiplier
+
+    const effectiveProtection = Math.max(
+        protection - damageData.armorPiercing,
+        0
+    );
+
+    const damageAfterProtection = Math.max(
+        scaledDamage - effectiveProtection,
+        0
+    );
 
     token?.actor?.update({
         ["system.health.value"]: Math.max(token?.actor?.system?.health?.value - damageAfterProtection, 0)
     });
+
+    ui.notifications.info(`Damage ${damageAfterProtection} was applied to ${token.name}`);
 }
 
 export function getCurrentActor() {

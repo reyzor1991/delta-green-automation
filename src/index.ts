@@ -1,7 +1,7 @@
 import {enrichSanityString, enrichSkillString} from "./enrichers.js";
 import {clickInlineSanityRoll, clickInlineSkillRoll, handleInlineActions, InlineOptions,} from "./inline.js";
 import {GlobalRolls, moduleName} from "./const.js";
-import {applyDamage, currentTargets, getCurrentActor, htmlClosest, localizeFormat} from "./utils.js";
+import {applyDamage, currentTargets, DamageData, getCurrentActor, htmlClosest, localizeFormat} from "./utils.js";
 import {Settings} from "./settings.js";
 import {ActionDataModel, ActionsForm, ActionSheet} from "./action.js";
 import {EffectDataModel, EffectsForm, EffectSheet} from "./effect.js";
@@ -214,8 +214,13 @@ function isDamage(message: ChatMessage) {
     return message.isRoll && message.rolls[0]?.type === 'damage';
 }
 
-function getMessageDamage(message: ChatMessage): number {
-    return message?.rolls?.[0].total || 0;
+function getMessageDamage(message: ChatMessage): DamageData {
+    let roll = message?.rolls?.[0];
+
+    return {
+        damageAmount: roll?.total || 0,
+        armorPiercing: roll?.item?.system?.armorPiercing
+    };
 }
 
 //Add targets to damage
@@ -223,8 +228,8 @@ Hooks.on('renderChatMessage', async (message: ChatMessage, $html: JQuery<HTMLEle
     if (!game.user.isActiveGM || !isDamage(message)) {
         return;
     }
-    let damageAmount = getMessageDamage(message);
-    if (!damageAmount) {
+    let damageData = getMessageDamage(message);
+    if (!damageData.damageAmount) {
         return;
     }
 
@@ -255,8 +260,7 @@ Hooks.on('renderChatMessage', async (message: ChatMessage, $html: JQuery<HTMLEle
             let damageIcon = $(`<i class="fas fa-user-minus fa-fw" data-tooltip="Apply Damage"></i>`);
 
             damageIcon.on("click", async () => {
-                applyDamage(token, damageAmount)
-                ui.notifications.info('Damage was applied');
+                applyDamage(token, damageData)
             });
 
             targetRow.find(".target-row-btns").append(damageIcon);

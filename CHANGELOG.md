@@ -1,3 +1,6 @@
+## Version 0.0.39
+- Add logic of armor piercing to apply damage
+
 ## Version 0.0.38
 - Corruption form btn - show only when Show Impossible Landscapes Content is on
 
